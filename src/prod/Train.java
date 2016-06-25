@@ -4,6 +4,7 @@ public class Train {
 	
 	private String name;
 	private String modelDesc;
+	private String imagePath;
 	private int speed;
 	private boolean lightActive;
 	private boolean directionRight;
@@ -27,6 +28,12 @@ public class Train {
 	}
 	public void setModelDesc(String modelDesc) {
 		this.modelDesc = modelDesc;
+	}
+	public String getImagePath() {
+		return imagePath;
+	}
+	public void setImagePath(String imagePath) {
+		this.imagePath = imagePath;
 	}
 	public int getSpeed() {
 		return speed;

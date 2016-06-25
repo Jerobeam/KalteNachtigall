@@ -8,7 +8,7 @@ public class TrainCollection {
 	private ArrayList<Train> trains;
 	
 	public TrainCollection(){
-		
+		trains = new ArrayList<Train>();
 	}
 
 	public Train getTrainByName(String name){
@@ -21,12 +21,12 @@ public class TrainCollection {
 	}
 	
 	public void addTrain(Train train){
-		for (Train t : trains) {
-			if(t.getName().equals(train.getName())){
-				return;
-			}
+		// Bevor Zug hinzugefügt wird, muss überprüft werden, ob der Zug bereits mit dem Namen existiert
+		if(this.trainIsAlreadyExisting(train.getName())){
+			return;
+		}else{
+			this.trains.add(train);
 		}
-		this.trains.add(train);
 	}
 	
 	public ArrayList<Train> getTrains() {
@@ -37,6 +37,15 @@ public class TrainCollection {
 		this.trains = trains;
 	}
 	
+	// Methode zum Überprüfen, ob Zug bereits existiert
+	public boolean trainIsAlreadyExisting(String name){
+		for (Train t : trains) {
+			if(t.getName().equals(name)){
+				return true;
+			}
+		}
+		return false;
+	}
 	
 	
 }
