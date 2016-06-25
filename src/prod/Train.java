@@ -9,9 +9,10 @@ public class Train {
 	private boolean lightActive;
 	private boolean directionRight;
 	
-	public Train(String name, String modelDesc){
+	public Train(String name, String modelDesc, String imagePath){
 		this.name = name;
 		this.modelDesc = modelDesc;
+		this.imagePath = imagePath;
 		this.speed = 0;
 		this.lightActive = false;
 		this.directionRight = true;

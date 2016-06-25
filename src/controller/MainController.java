@@ -35,6 +35,16 @@ public class MainController implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("addTrain")) {
+			
+			// Erstelle neues Panel in der Liste für neuen Zug
+//			JPanel train3 = new JPanel();
+//			 train3.setBorder(BorderFactory.createTitledBorder("train3"));
+//			 train3.setPreferredSize(new Dimension(250, 100));
+//			 train3.setMaximumSize(new Dimension(250, 100));
+//			 train3.setMinimumSize(new Dimension(250, 100));
+//			 this.trainsPanel.add(train3);
+//			 this.trainsPanel.revalidate();
+			
 			// Erstelle neuen Dialog
 			this.newTrainDialog = new JDialog(this.mainFrame, "Neuer Zug", true);
 			newTrainDialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -68,9 +78,9 @@ public class MainController implements ActionListener {
 			c.anchor = GridBagConstraints.LINE_START;
 			newTrainNameTextField = new JTextField();
 			newTrainDialog.add(newTrainNameTextField, c);
+			
 			// Setze Layout Einstellungen für 2. Textfeld
 			c.gridy = 1;
-			
 			newTrainModelDescTextField = new JTextField();
 			newTrainDialog.add(newTrainModelDescTextField, c);
 			// Setze Layout Einstellungen für "Durchsuchen"-Button
@@ -128,13 +138,6 @@ public class MainController implements ActionListener {
 					dim.height / 2 - newTrainDialog.getSize().height / 2);
 			newTrainDialog.setVisible(true);
 
-			// JPanel train3 = new JPanel();
-			// train3.setBorder(BorderFactory.createTitledBorder("train3"));
-			// train3.setPreferredSize(new Dimension(250, 100));
-			// train3.setMaximumSize(new Dimension(250, 100));
-			// train3.setMinimumSize(new Dimension(250, 100));
-			// this.trainsPanel.add(train3);
-			// this.trainsPanel.revalidate();
 		} else if (e.getActionCommand().equals("searchForImage")) {
 			// FileChooser aufrufen
 			JFileChooser fileChooser = new JFileChooser(new File(System.getProperty("user.home")));
@@ -165,24 +168,22 @@ public class MainController implements ActionListener {
 			
 			// Überprüfen, ob Zugname eingegeben wurde
 			if(newTrainNameTextField.getText().equals("")){
-				JOptionPane.showMessageDialog (newTrainDialog, "Bitte geben Sie dem Zug einen Namen", 
+				JOptionPane.showMessageDialog (newTrainDialog, "Bitte gebe dem Zug einen Namen", 
 			            "Zugname leer", JOptionPane.WARNING_MESSAGE);
 				return;
 			}
 			// Überprüfen, ob Zug bereits existiert
 			if(trainCollection.trainIsAlreadyExisting(trainName)){
-				JOptionPane.showMessageDialog (newTrainDialog, "Zug existiert bereits, bitte geben Sie einen anderen Namen ein", 
+				JOptionPane.showMessageDialog (newTrainDialog, "Zug existiert bereits, bitte gebe einen anderen Namen ein", 
 			            "Zug existiert bereits", JOptionPane.WARNING_MESSAGE);
 				return;
 			}
 
 			// Wenn beide Fälle nicht eintreten, füge Zug der trainCollection hinzu
-			Train newTrain = new Train(trainName, trainModelDesc);
-			newTrain.setImagePath(imagePath);
-			System.out.println(imagePath);
+			Train newTrain = new Train(trainName, trainModelDesc, imagePath);
 			this.trainCollection.addTrain(newTrain);
-			System.out.println("Train added: " + newTrain.toString());
-			System.out.println(trainCollection.getTrainByName(trainName).toString());
+			newTrainDialog.dispose();
+			
 		}
 	}
 
