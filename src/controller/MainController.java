@@ -52,7 +52,7 @@ public class MainController implements ActionListener {
 			newTrainDialog.setLayout(new GridBagLayout());
 			GridBagConstraints c;
 			// Setze Ränder zwischen einzelnen Komponenten
-			Insets set = new Insets(5, 5, 5, 5);
+			Insets set = new Insets(10, 10, 10, 10);
 
 			// Setze Layout Einstellungen für 1.Label
 			c = new GridBagConstraints();
@@ -184,7 +184,125 @@ public class MainController implements ActionListener {
 			this.trainCollection.addTrain(newTrain);
 			newTrainDialog.dispose();
 			
+			// Nach schließen des Dialoges muss der neue Zug auch im UI erstellt werden
+			this.drawTrainPanel(newTrain);
+			
 		}
+	}
+	
+	public void drawTrainPanel(Train train){
+		JPanel newTrainPanel = new JPanel();
+		newTrainPanel.setName(train.getName());
+//		newTrainPanel.setBorder(BorderFactory.createTitledBorder(" "));
+		newTrainPanel.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
+		newTrainPanel.setPreferredSize(new Dimension(315, 100));
+		newTrainPanel.setMaximumSize(new Dimension(315, 100));
+		newTrainPanel.setMinimumSize(new Dimension(315, 100));
+
+		newTrainPanel.setLayout(new GridLayout());
+
+		newTrainPanel.setLayout(new GridBagLayout());
+
+		// Erstelle Regeln für GridBagLayout.
+		GridBagConstraints c = new GridBagConstraints();
+		c.fill = GridBagConstraints.BOTH;
+//		Insets set = new Insets(5, 5, 5, 5);
+		// c.insets = set;
+		c.weightx = 1.0;
+		c.weighty = 1.0;
+
+		// Füge Zugname hinzu
+		JLabel trainName = new JLabel(train.getName());
+
+		c.gridx = 1;
+		c.gridy = 0;
+		newTrainPanel.add(trainName, c);
+
+		JLabel trainModelDesc = new JLabel(train.getModelDesc());
+		c.gridx = 1;
+		c.gridy = 1;
+		newTrainPanel.add(trainModelDesc, c);
+
+		JLabel speedLabel = new JLabel("Geschwindigkeit: " + train.getSpeed() +"%");
+		c.gridx = 2;
+		c.gridy = 0;
+		newTrainPanel.add(speedLabel, c);
+
+		JLabel lightLabel = new JLabel();
+		if(train.isLightActive()){
+			lightLabel.setText("Licht: An");
+		}else{
+			lightLabel.setText("Licht: Aus");
+		}
+		c.gridx = 2;
+		c.gridy = 1;
+		newTrainPanel.add(lightLabel, c);
+
+		// Füge Zugbild hinzu
+		JLabel trainImageLabel = new JLabel();
+		ImageIcon icon = new ImageIcon();
+		Image img;
+		icon = new ImageIcon(train.getImagePath());
+		img = icon.getImage();
+		img = img.getScaledInstance(70, 70, java.awt.Image.SCALE_SMOOTH);
+		icon = new ImageIcon(img);
+		trainImageLabel.setIcon(icon);
+		c.gridx = 0;
+		c.gridy = 0;
+		c.gridheight = 2;
+		c.anchor = GridBagConstraints.CENTER;
+		c.fill = GridBagConstraints.VERTICAL;
+		newTrainPanel.add(trainImageLabel, c);
+
+		JButton editTrainButton = new JButton();
+		ImageIcon iconEdit = new ImageIcon();
+		Image imgEdit;
+		iconEdit = new ImageIcon("images/edit.png");
+		imgEdit = iconEdit.getImage();
+		imgEdit = imgEdit.getScaledInstance(25, 25, java.awt.Image.SCALE_SMOOTH);
+		iconEdit = new ImageIcon(imgEdit);
+		editTrainButton = new JButton(iconEdit);
+		editTrainButton.setBorder(BorderFactory.createEmptyBorder());
+
+		JButton deleteTrainButton = new JButton();
+		ImageIcon iconDelete = new ImageIcon();
+		Image imgDelete;
+		iconDelete = new ImageIcon("images/trash.png");
+		imgDelete = iconDelete.getImage();
+		imgDelete = imgDelete.getScaledInstance(25, 25, java.awt.Image.SCALE_SMOOTH);
+		iconDelete = new ImageIcon(imgDelete);
+		deleteTrainButton = new JButton(iconDelete);
+		deleteTrainButton.setBorder(BorderFactory.createEmptyBorder());
+
+		JPanel trainActionPanel = new JPanel();
+		trainActionPanel.add(editTrainButton);
+		trainActionPanel.add(deleteTrainButton);
+		c.gridx = 0;
+		c.gridy = 3;
+		c.gridwidth = 1;
+		newTrainPanel.add(trainActionPanel, c);
+
+		JLabel directionLabel = new JLabel();
+		if(train.isDirectionRight()){
+			directionLabel.setText("Fahrtrichtung: Rechts");
+		}else{
+			directionLabel.setText("Fahrtrichtung: Links");
+		}
+		c.gridx = 2;
+		c.gridy = 3;
+		c.gridwidth = 1;
+		c.fill = GridBagConstraints.BOTH;
+		newTrainPanel.add(directionLabel, c);
+
+		this.trainsPanel.add(newTrainPanel);
+		this.trainsPanel.revalidate();
+
+//		JPanel train2 = new JPanel();
+//		train2.setBorder(BorderFactory.createTitledBorder("train2"));
+//		train2.setPreferredSize(new Dimension(250, 100));
+//		train2.setMaximumSize(new Dimension(250, 100));
+//		train2.setMinimumSize(new Dimension(250, 100));
+//		this.trainsPanel.add(train2);
 	}
 
 }

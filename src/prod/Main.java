@@ -66,121 +66,16 @@ public class Main {
 		panel.setMaximumSize(new Dimension(350, 500));
 		frame.add(panel, BorderLayout.WEST);
 
-		JPanel panelTrains = new JPanel();
-		panelTrains.setLayout(new BoxLayout(panelTrains, BoxLayout.Y_AXIS));
+		JPanel trainsPanel = new JPanel();
+		trainsPanel.setLayout(new BoxLayout(trainsPanel, BoxLayout.Y_AXIS));
 
-		final JScrollPane scroll = new JScrollPane(panelTrains);
+		final JScrollPane scroll = new JScrollPane(trainsPanel);
 
 		panel.add(scroll);
 
-		JPanel train1 = new JPanel();
-		train1.setName("Zug 1");
-		// train1.setBorder(BorderFactory.createTitledBorder("Zug 1"));
-		train1.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
-		train1.setPreferredSize(new Dimension(315, 100));
-		train1.setMaximumSize(new Dimension(315, 100));
-		train1.setMinimumSize(new Dimension(315, 100));
-
-		train1.setLayout(new GridLayout());
-
-		train1.setLayout(new GridBagLayout());
-
-		// Erstelle Regeln für GridBagLayout.
-		GridBagConstraints c = new GridBagConstraints();
-		// Regel: Objekt füllt Zelle in X- und Y-Richtung aus.
-		c.fill = GridBagConstraints.BOTH;
-		Insets set = new Insets(5, 5, 5, 5);
-		// c.insets = set;
-		// Regel: Ausdehnung erfolgt mit Gewichtung 1 in X-Richtung.
-		c.weightx = 1.0;
-		// Regel: Ausdehnung erfolgt mit Gewichtung 1 in Y-Richtung.
-		c.weighty = 1.0;
-
-		// Füge Zugname hinzu
-		JLabel trainName = new JLabel("DL-TH2231");
-
-		c.gridx = 1;
-		c.gridy = 0;
-		train1.add(trainName, c);
-
-		JLabel trainModelDesc = new JLabel("Dampflok");
-		c.gridx = 1;
-		c.gridy = 1;
-		train1.add(trainModelDesc, c);
-
-		JLabel speedLabel = new JLabel("Geschwindigkeit: 57%");
-		c.gridx = 2;
-		c.gridy = 0;
-		train1.add(speedLabel, c);
-
-		JLabel lightLabel = new JLabel("Licht: Aus");
-		c.gridx = 2;
-		c.gridy = 1;
-		train1.add(lightLabel, c);
-
-		// Füge Zugbild hinzu
-		JLabel trainImageLabel = new JLabel();
-		ImageIcon icon = new ImageIcon();
-		Image img;
-		icon = new ImageIcon("D:/Bilder/Saved Pictures/Beautiful/2e24cab28226942d.png");
-		img = icon.getImage();
-		img = img.getScaledInstance(70, 70, java.awt.Image.SCALE_SMOOTH);
-		icon = new ImageIcon(img);
-		trainImageLabel.setIcon(icon);
-		c.gridx = 0;
-		c.gridy = 0;
-		c.gridheight = 2;
-		c.anchor = GridBagConstraints.CENTER;
-		c.fill = GridBagConstraints.VERTICAL;
-		train1.add(trainImageLabel, c);
-
-		JButton editTrainButton = new JButton();
-		ImageIcon iconEdit = new ImageIcon();
-		Image imgEdit;
-		iconEdit = new ImageIcon("images/edit.png");
-		imgEdit = iconEdit.getImage();
-		imgEdit = imgEdit.getScaledInstance(25, 25, java.awt.Image.SCALE_SMOOTH);
-		iconEdit = new ImageIcon(imgEdit);
-		editTrainButton = new JButton(iconEdit);
-		editTrainButton.setBorder(BorderFactory.createEmptyBorder());
-
-		JButton deleteTrainButton = new JButton();
-		ImageIcon iconDelete = new ImageIcon();
-		Image imgDelete;
-		iconDelete = new ImageIcon("images/trash.png");
-		imgDelete = iconDelete.getImage();
-		imgDelete = imgDelete.getScaledInstance(25, 25, java.awt.Image.SCALE_SMOOTH);
-		iconDelete = new ImageIcon(imgDelete);
-		deleteTrainButton = new JButton(iconDelete);
-		deleteTrainButton.setBorder(BorderFactory.createEmptyBorder());
-
-		JPanel trainActionPanel = new JPanel();
-		trainActionPanel.add(editTrainButton);
-		trainActionPanel.add(deleteTrainButton);
-		c.gridx = 0;
-		c.gridy = 3;
-		c.gridwidth = 1;
-		train1.add(trainActionPanel, c);
-
-		JLabel directionLabel = new JLabel("Fahrtrichtung: Rechts");
-		c.gridx = 2;
-		c.gridy = 3;
-		c.gridwidth = 1;
-		c.fill = GridBagConstraints.BOTH;
-		train1.add(directionLabel, c);
-
-		panelTrains.add(train1);
-
-		JPanel train2 = new JPanel();
-		train2.setBorder(BorderFactory.createTitledBorder("train2"));
-		train2.setPreferredSize(new Dimension(250, 100));
-		train2.setMaximumSize(new Dimension(250, 100));
-		train2.setMinimumSize(new Dimension(250, 100));
-		panelTrains.add(train2);
-
 		JButton addTrainButton = new JButton("New Train");
 
-		MainController mainController = new MainController(frame, panelTrains, trainCollection);
+		MainController mainController = new MainController(frame, trainsPanel, trainCollection);
 		addTrainButton.setActionCommand("addTrain");
 		addTrainButton.addActionListener(mainController);
 
