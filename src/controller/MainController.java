@@ -42,14 +42,6 @@ public class MainController implements ActionListener {
 
 			// Öffne Dialog für die Zugerstellung
 			this.openNewDialog();
-			// Erstelle neues Panel in der Liste für neuen Zug
-			// JPanel train3 = new JPanel();
-			// train3.setBorder(BorderFactory.createTitledBorder("train3"));
-			// train3.setPreferredSize(new Dimension(250, 100));
-			// train3.setMaximumSize(new Dimension(250, 100));
-			// train3.setMinimumSize(new Dimension(250, 100));
-			// this.trainsPanel.add(train3);
-			// this.trainsPanel.revalidate();
 
 		} else if (e.getActionCommand().equals("searchForImage")) {
 			// FileChooser aufrufen
@@ -102,14 +94,12 @@ public class MainController implements ActionListener {
 				return;
 			}
 
-			// Wenn beide Fälle nicht eintreten, füge Zug der trainCollection
-			// hinzu
+			// Wenn beide Fälle nicht eintreten, füge Zug der trainCollection hinzu
 			Train newTrain = new Train(trainName, trainModelDesc, imagePath);
 			this.trainCollection.addTrain(newTrain);
 			trainDialog.dispose();
 
-			// Nach schließen des Dialoges muss der neue Zug auch im UI erstellt
-			// werden
+			// Nach schließen des Dialoges muss der neue Zug auch im UI erstellt werden
 			this.drawTrainPanel(newTrain);
 
 		} else if (e.getActionCommand().equals("editTrain")) {
@@ -166,23 +156,19 @@ public class MainController implements ActionListener {
 						JOptionPane.WARNING_MESSAGE);
 				return;
 			}
-			// Werfe Fehler, wenn Zugname bereits von einem anderen Zug belegt
-			// ist
+			// Werfe Fehler, wenn Zugname bereits von einem anderen Zug belegt ist
 			if (trainCollection.trainIsAlreadyExisting(trainName) && !(affectedTrain.getName().equals(trainName))) {
 				JOptionPane.showMessageDialog(trainDialog, "Zug existiert bereits, bitte gebe einen anderen Namen ein",
 						"Zug existiert bereits", JOptionPane.WARNING_MESSAGE);
 				return;
 			}
-
 			// Wenn beide Fälle nicht eintreten, update den Zug
 			affectedTrain.setName(trainName);
 			affectedTrain.setModelDesc(trainModelDesc);
 			affectedTrain.setImagePath(imagePath);
 			trainDialog.dispose();
 
-			// Nach schließen des Dialoges muss der neue Zug auch im UI
-			// aktualisiert
-			// werden
+			// Nach schließen des Dialoges muss der neue Zug auch im UI aktualisiert werden
 			this.redrawTrainPanel(affectedTrain, affectedPanel);
 		}
 	}
@@ -280,7 +266,7 @@ public class MainController implements ActionListener {
 		createButton.setActionCommand("createTrain");
 		createButton.addActionListener(this);
 		// Setze "Erstelle"-Button als Default Button, damit er durch
-		// Enter-Drücken ausgelöst wird und blaum umrandet ist
+		// Enter-Drücken ausgelöst wird und blau umrandet ist
 		trainDialog.getRootPane().setDefaultButton(createButton);
 
 		// Füge Buttons dem Hilfspanel hinzu
@@ -414,13 +400,6 @@ public class MainController implements ActionListener {
 
 		this.trainsPanel.add(newTrainPanel);
 		this.trainsPanel.revalidate();
-
-		// JPanel train2 = new JPanel();
-		// train2.setBorder(BorderFactory.createTitledBorder("train2"));
-		// train2.setPreferredSize(new Dimension(250, 100));
-		// train2.setMaximumSize(new Dimension(250, 100));
-		// train2.setMinimumSize(new Dimension(250, 100));
-		// this.trainsPanel.add(train2);
 	}
 
 	public void openEditDialog(Train train) {
@@ -572,8 +551,6 @@ public class MainController implements ActionListener {
 		// Erstelle Regeln für GridBagLayout.
 		GridBagConstraints c = new GridBagConstraints();
 		c.fill = GridBagConstraints.BOTH;
-		// Insets set = new Insets(5, 5, 5, 5);
-		// c.insets = set;
 		c.weightx = 1.0;
 		c.weighty = 1.0;
 
