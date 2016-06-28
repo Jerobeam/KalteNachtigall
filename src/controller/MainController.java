@@ -30,6 +30,7 @@ public class MainController implements ActionListener, MouseListener {
 	private String imagePath;
 	private JPanel affectedPanel;
 	private Train affectedTrain;
+	private JPanel selectedTrainPanel;
 
 	public MainController(JFrame mainFrame, JPanel trainsPanel, TrainCollection trainCollection) {
 		this.mainFrame = mainFrame;
@@ -146,6 +147,7 @@ public class MainController implements ActionListener, MouseListener {
 				this.trainCollection.removeTrainFromCollection(affectedTrain);
 				// Entferne Panel und refreshe trainsPanel
 				this.trainsPanel.remove(this.affectedPanel);
+				this.trainsPanel.revalidate();
 				this.trainsPanel.repaint();
 			} else {
 				return;
@@ -330,15 +332,16 @@ public class MainController implements ActionListener, MouseListener {
 		c.gridy = 0;
 		newTrainPanel.add(speedLabel, c);
 
-		JLabel lightLabel = new JLabel();
-		if (train.isLightActive()) {
-			lightLabel.setText("Licht: An");
+		JLabel directionLabel = new JLabel();
+		if (train.isDirectionRight()) {
+			directionLabel.setText("Fahrtrichtung: Rechts");
 		} else {
-			lightLabel.setText("Licht: Aus");
+			directionLabel.setText("Fahrtrichtung: Links");
 		}
+		
 		c.gridx = 2;
 		c.gridy = 1;
-		newTrainPanel.add(lightLabel, c);
+		newTrainPanel.add(directionLabel, c);
 
 		// Füge Zugbild hinzu
 		JLabel trainImageLabel = new JLabel();
@@ -394,17 +397,17 @@ public class MainController implements ActionListener, MouseListener {
 		c.gridwidth = 1;
 		newTrainPanel.add(trainActionPanel, c);
 
-		JLabel directionLabel = new JLabel();
-		if (train.isDirectionRight()) {
-			directionLabel.setText("Fahrtrichtung: Rechts");
+		JLabel lightLabel = new JLabel();
+		if (train.isLightActive()) {
+			lightLabel.setText("Licht: An");
 		} else {
-			directionLabel.setText("Fahrtrichtung: Links");
+			lightLabel.setText("Licht: Aus");
 		}
 		c.gridx = 2;
 		c.gridy = 3;
 		c.gridwidth = 1;
 		c.fill = GridBagConstraints.BOTH;
-		newTrainPanel.add(directionLabel, c);
+		newTrainPanel.add(lightLabel, c);
 
 		newTrainPanel.addMouseListener(this);
 
@@ -585,15 +588,15 @@ public class MainController implements ActionListener, MouseListener {
 		c.gridy = 0;
 		panel.add(speedLabel, c);
 
-		JLabel lightLabel = new JLabel();
-		if (train.isLightActive()) {
-			lightLabel.setText("Licht: An");
+		JLabel directionLabel = new JLabel();
+		if (train.isDirectionRight()) {
+			directionLabel.setText("Fahrtrichtung: Rechts");
 		} else {
-			lightLabel.setText("Licht: Aus");
+			directionLabel.setText("Fahrtrichtung: Links");
 		}
 		c.gridx = 2;
 		c.gridy = 1;
-		panel.add(lightLabel, c);
+		panel.add(directionLabel, c);
 
 		// Füge Zugbild hinzu
 		JLabel trainImageLabel = new JLabel();
@@ -649,18 +652,18 @@ public class MainController implements ActionListener, MouseListener {
 		c.gridwidth = 1;
 
 		panel.add(trainActionPanel, c);
-
-		JLabel directionLabel = new JLabel();
-		if (train.isDirectionRight()) {
-			directionLabel.setText("Fahrtrichtung: Rechts");
+		
+		JLabel lightLabel = new JLabel();
+		if (train.isLightActive()) {
+			lightLabel.setText("Licht: An");
 		} else {
-			directionLabel.setText("Fahrtrichtung: Links");
+			lightLabel.setText("Licht: Aus");
 		}
 		c.gridx = 2;
 		c.gridy = 3;
 		c.gridwidth = 1;
 		c.fill = GridBagConstraints.BOTH;
-		panel.add(directionLabel, c);
+		panel.add(lightLabel, c);
 
 		this.trainsPanel.revalidate();
 	}
@@ -673,11 +676,19 @@ public class MainController implements ActionListener, MouseListener {
 	public void mouseEntered(MouseEvent e) {
 		if (e.getSource() instanceof JPanel) {
 			JPanel activePanel = (JPanel) (e.getSource());
-			activePanel.setBackground(new Color(233, 233, 233));
+			// Setze Hintergrund nur, wenn das Panel nicht gerade angeklickt
+			// wurde
+			if (!(activePanel == selectedTrainPanel)) {
+				activePanel.setBackground(new Color(230, 230, 230));
+			}
 		} else if (e.getSource() instanceof JButton) {
 			JButton activeButton = (JButton) (e.getSource());
 			JPanel activePanel = (JPanel) activeButton.getParent().getParent();
-			activePanel.setBackground(new Color(233, 233, 233));
+			// Setze Hintergrund nur, wenn das Panel nicht gerade angeklickt
+			// wurde
+			if (!(activePanel == selectedTrainPanel)) {
+				activePanel.setBackground(new Color(230, 230, 230));
+			}
 		}
 	}
 
@@ -685,7 +696,11 @@ public class MainController implements ActionListener, MouseListener {
 	public void mouseExited(MouseEvent e) {
 		if (e.getSource() instanceof JPanel) {
 			JPanel activePanel = (JPanel) (e.getSource());
-			activePanel.setBackground(trainsPanel.getBackground());
+			// Setze Hintergrund nur zurück, wenn das Panel nicht gerade
+			// angeklickt wurde
+			if (!(activePanel == selectedTrainPanel)) {
+				activePanel.setBackground(trainsPanel.getBackground());
+			}
 		}
 	}
 
@@ -695,6 +710,18 @@ public class MainController implements ActionListener, MouseListener {
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
+		if (e.getSource() instanceof JPanel) {
+			JPanel activePanel = (JPanel) (e.getSource());
+			if (selectedTrainPanel == null) {
+				this.selectedTrainPanel = activePanel;
+				activePanel.setBackground(new Color(210, 210, 210));
+			} else {
+				selectedTrainPanel.setBackground(trainsPanel.getBackground());
+				this.selectedTrainPanel = activePanel;
+				activePanel.setBackground(new Color(210, 210, 210));
+			}
+
+		}
 	}
 
 }
