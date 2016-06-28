@@ -5,6 +5,7 @@ public class Train {
 	private String name;
 	private String modelDesc;
 	private String imagePath;
+	// Geschwindigkeit in Prozent von 0 bis 100
 	private int speed;
 	private boolean lightActive;
 	private boolean directionRight;
@@ -40,7 +41,14 @@ public class Train {
 		return speed;
 	}
 	public void setSpeed(int speed) {
-		this.speed = speed;
+		// Erlaube nur Werte von 0 bis 100
+		if(speed > 100){
+			this.speed = 100;
+		}else if(speed < 0){
+			this.speed = 0;
+		}else{
+			this.speed = speed;
+		}
 	}
 	public boolean isLightActive() {
 		return lightActive;
