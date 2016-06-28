@@ -47,5 +47,18 @@ public class TrainCollection {
 		return false;
 	}
 	
+	public void removeTrainFromCollection(Train train){
+		if(train != null){
+			this.trains.remove(train);
+		}
+	}
 	
+	// Methode zum Debuggen
+	public void printAllTrain(){
+		int i = 0;
+		for (Train train : trains) {
+			System.out.println("Zug Nr. " + i + ": " + train.getName());
+			i++;
+		}
+	}
 }

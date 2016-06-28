@@ -40,6 +40,8 @@ public class MainController implements ActionListener {
 			// imagePath zurücksetzen
 			this.imagePath = null;
 
+			// Öffne Dialog für die Zugerstellung
+			this.openNewDialog();
 			// Erstelle neues Panel in der Liste für neuen Zug
 			// JPanel train3 = new JPanel();
 			// train3.setBorder(BorderFactory.createTitledBorder("train3"));
@@ -48,100 +50,6 @@ public class MainController implements ActionListener {
 			// train3.setMinimumSize(new Dimension(250, 100));
 			// this.trainsPanel.add(train3);
 			// this.trainsPanel.revalidate();
-
-			// Erstelle neuen Dialog
-			this.trainDialog = new JDialog(this.mainFrame, "Neuer Zug", true);
-			trainDialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-			// Setze Layout für Dialog
-			trainDialog.setLayout(new GridBagLayout());
-			GridBagConstraints c;
-			// Setze Ränder zwischen einzelnen Komponenten
-			Insets set = new Insets(10, 10, 10, 10);
-
-			// Setze Layout Einstellungen für 1.Label
-			c = new GridBagConstraints();
-			c.insets = set;
-			c.gridx = 0;
-			c.gridy = 0;
-			c.anchor = GridBagConstraints.LINE_START;
-			trainDialog.add(new JLabel("Zugname: "), c);
-			// Setze Layout Einstellungen für 2.Label
-			c.gridy = 1;
-			trainDialog.add(new JLabel("Modell (optional): "), c);
-			// Setze Layout Einstellungen für 3.Label
-			c.gridy = 3;
-			trainDialog.add(new JLabel("Bild (optional): "), c);
-
-			// Setze Layout Einstellungen für 1. Textfeld
-			c = new GridBagConstraints();
-			c.insets = set;
-			c.gridx = 1;
-			c.gridy = 0;
-			c.gridwidth = GridBagConstraints.REMAINDER;
-			c.fill = GridBagConstraints.HORIZONTAL;
-			c.anchor = GridBagConstraints.LINE_START;
-			trainNameTextField = new JTextField();
-			trainDialog.add(trainNameTextField, c);
-
-			// Setze Layout Einstellungen für 2. Textfeld
-			c.gridy = 1;
-			trainModelDescTextField = new JTextField();
-			trainDialog.add(trainModelDescTextField, c);
-			// Setze Layout Einstellungen für "Durchsuchen"-Button
-			c.gridx = 1;
-			c.gridy = 4;
-			c.gridwidth = 1;
-			JButton searchButton = new JButton("Durchsuchen");
-			searchButton.setActionCommand("searchForImage");
-			searchButton.addActionListener(this);
-			trainDialog.add(searchButton, c);
-
-			// Setze Layout Einstellungen für Zugbild
-			c = new GridBagConstraints();
-			c.insets = set;
-			c.gridx = 1;
-			c.gridy = 3;
-			c.gridwidth = GridBagConstraints.REMAINDER;
-			c.fill = GridBagConstraints.BOTH;
-			c.anchor = GridBagConstraints.FIRST_LINE_START;
-			c.weightx = 1.0;
-			c.weighty = 1.0;
-
-			trainImageLabel = new JLabel("Kein Bild gesetzt");
-			trainDialog.add(trainImageLabel, c);
-
-			// Setze Layout Einstellungen Action-Buttons
-			c = new GridBagConstraints();
-			c.gridx = 2;
-			c.gridy = 5;
-			c.anchor = GridBagConstraints.EAST;
-			// Benutze Hilfspanel für rechtsbündige Ausrichung
-			JPanel panelAction = new JPanel();
-			// Setze Layout in Hilfsüane zu "FlowLayout.RIGHT"
-			panelAction.setLayout(new FlowLayout(FlowLayout.RIGHT));
-			// Erstelle Buttons zum Abbrechen oder Erstellen
-			JButton cancelDialogButton = new JButton("Abbrechen");
-			cancelDialogButton.setActionCommand("cancelDialog");
-			cancelDialogButton.addActionListener(this);
-			JButton createButton = new JButton("Erstellen");
-			createButton.setActionCommand("createTrain");
-			createButton.addActionListener(this);
-			// Setze "Erstelle"-Button als Default Button, damit er durch
-			// Enter-Drücken ausgelöst wird und blaum umrandet ist
-			trainDialog.getRootPane().setDefaultButton(createButton);
-
-			// Füge Buttons dem Hilfspanel hinzu
-			panelAction.add(cancelDialogButton);
-			panelAction.add(createButton);
-			// Füge Hilfspanel zum Dialog dazu
-			trainDialog.add(panelAction, c);
-
-			trainDialog.pack();
-			// newTrainDialog.setSize(400,300);
-			Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-			trainDialog.setLocation(dim.width / 2 - trainDialog.getSize().width / 2,
-					dim.height / 2 - trainDialog.getSize().height / 2);
-			trainDialog.setVisible(true);
 
 		} else if (e.getActionCommand().equals("searchForImage")) {
 			// FileChooser aufrufen
@@ -163,8 +71,15 @@ public class MainController implements ActionListener {
 				icon = new ImageIcon(img);
 				trainImageLabel.setText("");
 				trainImageLabel.setIcon(icon);
-				trainDialog.pack();
+				// trainDialog.pack();
+				trainDialog.setSize(400, 380);
 			}
+
+		} else if (e.getActionCommand().equals("deleteImage")) {
+			this.imagePath = null;
+			trainImageLabel.setIcon(null);
+			trainImageLabel.setText("Kein Bild gesetzt");
+			trainDialog.setSize(400, 250);
 
 		} else if (e.getActionCommand().equals("cancelDialog")) {
 			trainDialog.dispose();
@@ -215,7 +130,31 @@ public class MainController implements ActionListener {
 			this.openEditDialog(affectedTrain);
 
 		} else if (e.getActionCommand().equals("deleteTrain")) {
-			System.out.println("DELETE");
+			// Hole Button des getriggerten Events
+			JButton actionButton = (JButton) e.getSource();
+
+			// Speichere affectedPanel für später
+			this.affectedPanel = (JPanel) actionButton.getParent().getParent();
+
+			// Hole Zugname über Parent des Buttons
+			String trainName = affectedPanel.getName();
+			// Hole Zugobjekt
+			this.affectedTrain = this.trainCollection.getTrainByName(trainName);
+
+			// Frage nach, onb Zug wirklich gelöscht werden soll
+			int confirmResult = JOptionPane.showConfirmDialog(this.trainsPanel,
+					"Soll Zug " + trainName + " wirklich gelöscht werden?", "Zug " + trainName + " löschen?",
+					JOptionPane.YES_NO_OPTION);
+
+			if (confirmResult == JOptionPane.YES_OPTION) {
+				// Entferne Zugobjekt von trainCollection
+				this.trainCollection.removeTrainFromCollection(affectedTrain);
+				// Entferne Panel und refreshe trainsPanel
+				this.trainsPanel.remove(this.affectedPanel);
+				this.trainsPanel.repaint();
+			} else {
+				return;
+			}
 
 		} else if (e.getActionCommand().equals("saveTrain")) {
 			String trainName = trainNameTextField.getText();
@@ -246,6 +185,116 @@ public class MainController implements ActionListener {
 			// werden
 			this.redrawTrainPanel(affectedTrain, affectedPanel);
 		}
+	}
+
+	public void openNewDialog() {
+		// Erstelle neuen Dialog
+		this.trainDialog = new JDialog(this.mainFrame, "Neuer Zug", true);
+		trainDialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		// Setze Layout für Dialog
+		trainDialog.setLayout(new GridBagLayout());
+		GridBagConstraints c;
+		// Setze Ränder zwischen einzelnen Komponenten
+		Insets set = new Insets(10, 10, 10, 10);
+
+		// Setze Layout Einstellungen für 1.Label
+		c = new GridBagConstraints();
+		c.insets = set;
+		c.gridx = 0;
+		c.gridy = 0;
+		c.anchor = GridBagConstraints.LINE_START;
+		trainDialog.add(new JLabel("Zugname: "), c);
+		// Setze Layout Einstellungen für 2.Label
+		c.gridy = 1;
+		trainDialog.add(new JLabel("Modell (optional): "), c);
+		// Setze Layout Einstellungen für 3.Label
+		c.gridy = 3;
+		trainDialog.add(new JLabel("Bild (optional): "), c);
+
+		// Setze Layout Einstellungen für 1. Textfeld
+		c = new GridBagConstraints();
+		c.insets = set;
+		c.gridx = 1;
+		c.gridy = 0;
+		c.gridwidth = GridBagConstraints.REMAINDER;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.anchor = GridBagConstraints.LINE_START;
+		trainNameTextField = new JTextField();
+		trainDialog.add(trainNameTextField, c);
+
+		// Setze Layout Einstellungen für 2. Textfeld
+		c.gridy = 1;
+		trainModelDescTextField = new JTextField();
+		trainDialog.add(trainModelDescTextField, c);
+
+		// Setze Layout Einstellungen für Panel, welches den "Durchsuchen" und
+		// "Bild löschen"-Button enthält
+		c.gridx = 1;
+		c.gridy = 4;
+		c.gridwidth = 2;
+		// Erstelle neues Panel mit FlowLayout
+		JPanel imageButtonsPanel = new JPanel();
+		imageButtonsPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+		// Erstelle "Durchsuchen"-Button
+		JButton searchButton = new JButton("Durchsuchen");
+		searchButton.setActionCommand("searchForImage");
+		searchButton.addActionListener(this);
+		// Erstelle "Bild löschen"-Button
+		JButton deleteImageButton = new JButton("Bild löschen");
+		deleteImageButton.setActionCommand("deleteImage");
+		deleteImageButton.addActionListener(this);
+		// Füge Buttons dem Panel hinzu
+		imageButtonsPanel.add(searchButton);
+		imageButtonsPanel.add(deleteImageButton);
+		// Füge Panel dem Dialog hinzu
+		trainDialog.add(imageButtonsPanel, c);
+
+		// Setze Layout Einstellungen für Zugbild
+		c = new GridBagConstraints();
+		c.insets = set;
+		c.gridx = 1;
+		c.gridy = 3;
+		c.gridwidth = GridBagConstraints.REMAINDER;
+		c.fill = GridBagConstraints.BOTH;
+		c.anchor = GridBagConstraints.FIRST_LINE_START;
+		c.weightx = 1.0;
+		c.weighty = 1.0;
+
+		trainImageLabel = new JLabel("Kein Bild gesetzt");
+		trainDialog.add(trainImageLabel, c);
+
+		// Setze Layout Einstellungen Action-Buttons
+		c = new GridBagConstraints();
+		c.gridx = 2;
+		c.gridy = 5;
+		c.anchor = GridBagConstraints.EAST;
+		// Benutze Hilfspanel für rechtsbündige Ausrichung
+		JPanel panelAction = new JPanel();
+		// Setze Layout in Hilfsüane zu "FlowLayout.RIGHT"
+		panelAction.setLayout(new FlowLayout(FlowLayout.RIGHT));
+		// Erstelle Buttons zum Abbrechen oder Erstellen
+		JButton cancelDialogButton = new JButton("Abbrechen");
+		cancelDialogButton.setActionCommand("cancelDialog");
+		cancelDialogButton.addActionListener(this);
+		JButton createButton = new JButton("Erstellen");
+		createButton.setActionCommand("createTrain");
+		createButton.addActionListener(this);
+		// Setze "Erstelle"-Button als Default Button, damit er durch
+		// Enter-Drücken ausgelöst wird und blaum umrandet ist
+		trainDialog.getRootPane().setDefaultButton(createButton);
+
+		// Füge Buttons dem Hilfspanel hinzu
+		panelAction.add(cancelDialogButton);
+		panelAction.add(createButton);
+		// Füge Hilfspanel zum Dialog dazu
+		trainDialog.add(panelAction, c);
+
+		// trainDialog.pack();
+		trainDialog.setSize(400, 250);
+		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+		trainDialog.setLocation(dim.width / 2 - trainDialog.getSize().width / 2,
+				dim.height / 2 - trainDialog.getSize().height / 2);
+		trainDialog.setVisible(true);
 	}
 
 	public void drawTrainPanel(Train train) {
@@ -323,6 +372,8 @@ public class MainController implements ActionListener {
 		imgEdit = imgEdit.getScaledInstance(25, 25, java.awt.Image.SCALE_SMOOTH);
 		iconEdit = new ImageIcon(imgEdit);
 		editTrainButton = new JButton(iconEdit);
+		editTrainButton.setActionCommand("editTrain");
+		editTrainButton.addActionListener(this);
 		editTrainButton.setBorder(BorderFactory.createEmptyBorder());
 
 		// Erstellen des "Delete"-Buttons
@@ -334,17 +385,16 @@ public class MainController implements ActionListener {
 		imgDelete = imgDelete.getScaledInstance(25, 25, java.awt.Image.SCALE_SMOOTH);
 		iconDelete = new ImageIcon(imgDelete);
 		deleteTrainButton = new JButton(iconDelete);
+		deleteTrainButton.setActionCommand("deleteTrain");
+		deleteTrainButton.addActionListener(this);
 		deleteTrainButton.setBorder(BorderFactory.createEmptyBorder());
 
 		JPanel trainActionPanel = new JPanel();
 
 		trainActionPanel.add(editTrainButton);
-		editTrainButton.setActionCommand("editTrain");
-		editTrainButton.addActionListener(this);
 
 		trainActionPanel.add(deleteTrainButton);
-		deleteTrainButton.setActionCommand("deleteTrain");
-		deleteTrainButton.addActionListener(this);
+
 		c.gridx = 0;
 		c.gridy = 3;
 		c.gridwidth = 1;
@@ -414,14 +464,28 @@ public class MainController implements ActionListener {
 		trainModelDescTextField = new JTextField();
 		trainModelDescTextField.setText(train.getModelDesc());
 		trainDialog.add(trainModelDescTextField, c);
-		// Setze Layout Einstellungen für "Durchsuchen"-Button
+
+		// Setze Layout Einstellungen für Panel, welches den "Durchsuchen" und
+		// "Bild löschen"-Button enthält
 		c.gridx = 1;
 		c.gridy = 4;
-		c.gridwidth = 1;
+		c.gridwidth = 2;
+		// Erstelle neues Panel mit FlowLayout
+		JPanel imageButtonsPanel = new JPanel();
+		imageButtonsPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+		// Erstelle "Durchsuchen"-Button
 		JButton searchButton = new JButton("Durchsuchen");
 		searchButton.setActionCommand("searchForImage");
 		searchButton.addActionListener(this);
-		trainDialog.add(searchButton, c);
+		// Erstelle "Bild löschen"-Button
+		JButton deleteImageButton = new JButton("Bild löschen");
+		deleteImageButton.setActionCommand("deleteImage");
+		deleteImageButton.addActionListener(this);
+		// Füge Buttons dem Panel hinzu
+		imageButtonsPanel.add(searchButton);
+		imageButtonsPanel.add(deleteImageButton);
+		// Füge Panel dem Dialog hinzu
+		trainDialog.add(imageButtonsPanel, c);
 
 		// Setze Layout Einstellungen für Zugbild
 		c = new GridBagConstraints();
@@ -466,21 +530,26 @@ public class MainController implements ActionListener {
 		JButton cancelDialogButton = new JButton("Abbrechen");
 		cancelDialogButton.setActionCommand("cancelDialog");
 		cancelDialogButton.addActionListener(this);
-		JButton createButton = new JButton("Speichern");
-		createButton.setActionCommand("saveTrain");
-		createButton.addActionListener(this);
+		JButton saveButton = new JButton("Speichern");
+		saveButton.setActionCommand("saveTrain");
+		saveButton.addActionListener(this);
 		// Setze "Erstelle"-Button als Default Button, damit er durch
 		// Enter-Drücken ausgelöst wird und blaum umrandet ist
-		trainDialog.getRootPane().setDefaultButton(createButton);
+		trainDialog.getRootPane().setDefaultButton(saveButton);
 
 		// Füge Buttons dem Hilfspanel hinzu
 		panelAction.add(cancelDialogButton);
-		panelAction.add(createButton);
+		panelAction.add(saveButton);
 		// Füge Hilfspanel zum Dialog dazu
 		trainDialog.add(panelAction, c);
 
-		trainDialog.pack();
-		// newTrainDialog.setSize(400,300);
+		// trainDialog.pack();
+		if (train.getImagePath() == null) {
+			trainDialog.setSize(400, 250);
+		} else {
+			trainDialog.setSize(400, 380);
+		}
+
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 		trainDialog.setLocation(dim.width / 2 - trainDialog.getSize().width / 2,
 				dim.height / 2 - trainDialog.getSize().height / 2);
