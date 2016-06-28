@@ -59,7 +59,7 @@ public class Main {
 		JFrame frame = new JFrame("Lokomotiv Führer 2.0");
 
 		JPanel panel = new JPanel();
-		panel.setBorder(BorderFactory.createLineBorder(Color.red));
+//		panel.setBorder(BorderFactory.createLineBorder(Color.red));
 		panel.setBorder(BorderFactory.createTitledBorder("Deine Züge"));
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 		panel.setPreferredSize(new Dimension(350, 500));

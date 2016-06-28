@@ -3,6 +3,8 @@ package controller;
 import java.awt.event.ActionEvent;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileFilter;
@@ -10,12 +12,13 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.border.TitledBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import prod.Train;
 import prod.TrainCollection;
 
-public class MainController implements ActionListener {
+public class MainController implements ActionListener, MouseListener {
 
 	private JFrame mainFrame;
 	private JPanel trainsPanel;
@@ -94,12 +97,14 @@ public class MainController implements ActionListener {
 				return;
 			}
 
-			// Wenn beide Fälle nicht eintreten, füge Zug der trainCollection hinzu
+			// Wenn beide Fälle nicht eintreten, füge Zug der trainCollection
+			// hinzu
 			Train newTrain = new Train(trainName, trainModelDesc, imagePath);
 			this.trainCollection.addTrain(newTrain);
 			trainDialog.dispose();
 
-			// Nach schließen des Dialoges muss der neue Zug auch im UI erstellt werden
+			// Nach schließen des Dialoges muss der neue Zug auch im UI erstellt
+			// werden
 			this.drawTrainPanel(newTrain);
 
 		} else if (e.getActionCommand().equals("editTrain")) {
@@ -156,7 +161,8 @@ public class MainController implements ActionListener {
 						JOptionPane.WARNING_MESSAGE);
 				return;
 			}
-			// Werfe Fehler, wenn Zugname bereits von einem anderen Zug belegt ist
+			// Werfe Fehler, wenn Zugname bereits von einem anderen Zug belegt
+			// ist
 			if (trainCollection.trainIsAlreadyExisting(trainName) && !(affectedTrain.getName().equals(trainName))) {
 				JOptionPane.showMessageDialog(trainDialog, "Zug existiert bereits, bitte gebe einen anderen Namen ein",
 						"Zug existiert bereits", JOptionPane.WARNING_MESSAGE);
@@ -168,7 +174,8 @@ public class MainController implements ActionListener {
 			affectedTrain.setImagePath(imagePath);
 			trainDialog.dispose();
 
-			// Nach schließen des Dialoges muss der neue Zug auch im UI aktualisiert werden
+			// Nach schließen des Dialoges muss der neue Zug auch im UI
+			// aktualisiert werden
 			this.redrawTrainPanel(affectedTrain, affectedPanel);
 		}
 	}
@@ -360,6 +367,7 @@ public class MainController implements ActionListener {
 		editTrainButton = new JButton(iconEdit);
 		editTrainButton.setActionCommand("editTrain");
 		editTrainButton.addActionListener(this);
+		editTrainButton.addMouseListener(this);
 		editTrainButton.setBorder(BorderFactory.createEmptyBorder());
 
 		// Erstellen des "Delete"-Buttons
@@ -373,12 +381,12 @@ public class MainController implements ActionListener {
 		deleteTrainButton = new JButton(iconDelete);
 		deleteTrainButton.setActionCommand("deleteTrain");
 		deleteTrainButton.addActionListener(this);
+		deleteTrainButton.addMouseListener(this);
 		deleteTrainButton.setBorder(BorderFactory.createEmptyBorder());
 
 		JPanel trainActionPanel = new JPanel();
-
+		trainActionPanel.setOpaque(false);
 		trainActionPanel.add(editTrainButton);
-
 		trainActionPanel.add(deleteTrainButton);
 
 		c.gridx = 0;
@@ -397,6 +405,8 @@ public class MainController implements ActionListener {
 		c.gridwidth = 1;
 		c.fill = GridBagConstraints.BOTH;
 		newTrainPanel.add(directionLabel, c);
+
+		newTrainPanel.addMouseListener(this);
 
 		this.trainsPanel.add(newTrainPanel);
 		this.trainsPanel.revalidate();
@@ -536,6 +546,8 @@ public class MainController implements ActionListener {
 	}
 
 	public void redrawTrainPanel(Train train, JPanel panel) {
+		// Setze Hintergrund des Zugpanels zurück
+		panel.setBackground(trainsPanel.getBackground());
 		panel.removeAll();
 		panel.setName(train.getName());
 		// newTrainPanel.setBorder(BorderFactory.createTitledBorder(" "));
@@ -608,6 +620,9 @@ public class MainController implements ActionListener {
 		imgEdit = imgEdit.getScaledInstance(25, 25, java.awt.Image.SCALE_SMOOTH);
 		iconEdit = new ImageIcon(imgEdit);
 		editTrainButton = new JButton(iconEdit);
+		editTrainButton.setActionCommand("editTrain");
+		editTrainButton.addActionListener(this);
+		editTrainButton.addMouseListener(this);
 		editTrainButton.setBorder(BorderFactory.createEmptyBorder());
 
 		// Erstellen des "Delete"-Buttons
@@ -619,20 +634,20 @@ public class MainController implements ActionListener {
 		imgDelete = imgDelete.getScaledInstance(25, 25, java.awt.Image.SCALE_SMOOTH);
 		iconDelete = new ImageIcon(imgDelete);
 		deleteTrainButton = new JButton(iconDelete);
+		deleteTrainButton.setActionCommand("deleteTrain");
+		deleteTrainButton.addActionListener(this);
+		deleteTrainButton.addMouseListener(this);
 		deleteTrainButton.setBorder(BorderFactory.createEmptyBorder());
 
 		JPanel trainActionPanel = new JPanel();
-
+		trainActionPanel.setOpaque(false);
 		trainActionPanel.add(editTrainButton);
-		editTrainButton.setActionCommand("editTrain");
-		editTrainButton.addActionListener(this);
-
 		trainActionPanel.add(deleteTrainButton);
-		deleteTrainButton.setActionCommand("deleteTrain");
-		deleteTrainButton.addActionListener(this);
+
 		c.gridx = 0;
 		c.gridy = 3;
 		c.gridwidth = 1;
+
 		panel.add(trainActionPanel, c);
 
 		JLabel directionLabel = new JLabel();
@@ -648,6 +663,38 @@ public class MainController implements ActionListener {
 		panel.add(directionLabel, c);
 
 		this.trainsPanel.revalidate();
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		if (e.getSource() instanceof JPanel) {
+			JPanel activePanel = (JPanel) (e.getSource());
+			activePanel.setBackground(new Color(233, 233, 233));
+		} else if (e.getSource() instanceof JButton) {
+			JButton activeButton = (JButton) (e.getSource());
+			JPanel activePanel = (JPanel) activeButton.getParent().getParent();
+			activePanel.setBackground(new Color(233, 233, 233));
+		}
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		if (e.getSource() instanceof JPanel) {
+			JPanel activePanel = (JPanel) (e.getSource());
+			activePanel.setBackground(trainsPanel.getBackground());
+		}
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
 	}
 
 }
