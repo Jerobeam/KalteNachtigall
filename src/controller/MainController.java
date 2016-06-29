@@ -22,6 +22,7 @@ public class MainController implements ActionListener, MouseListener {
 
 	private JFrame mainFrame;
 	private JPanel trainsPanel;
+	private JPanel controllerAreaPanel;
 	private TrainCollection trainCollection;
 	private JDialog trainDialog;
 	private JLabel trainImageLabel;
@@ -31,10 +32,15 @@ public class MainController implements ActionListener, MouseListener {
 	private JPanel affectedPanel;
 	private Train affectedTrain;
 	private JPanel selectedTrainPanel;
+	private Train selectedTrain;
+	private JLabel selectedSpeedLabel;
+	private JLabel selectedDirectionsLabel;
+	private JLabel selectedLightLabel;
 
-	public MainController(JFrame mainFrame, JPanel trainsPanel, TrainCollection trainCollection) {
+	public MainController(JFrame mainFrame, JPanel trainsPanel, JPanel controllerAreaPanel, TrainCollection trainCollection) {
 		this.mainFrame = mainFrame;
 		this.trainsPanel = trainsPanel;
+		this.controllerAreaPanel = controllerAreaPanel;
 		this.trainCollection = trainCollection;
 	}
 
@@ -328,11 +334,13 @@ public class MainController implements ActionListener, MouseListener {
 		newTrainPanel.add(trainModelDesc, c);
 
 		JLabel speedLabel = new JLabel("Geschwindigkeit: " + train.getSpeed() + "%");
+		speedLabel.setName("speedLabel");
 		c.gridx = 2;
 		c.gridy = 0;
 		newTrainPanel.add(speedLabel, c);
 
 		JLabel directionLabel = new JLabel();
+		directionLabel.setName("directionLabel");
 		if (train.isDirectionRight()) {
 			directionLabel.setText("Fahrtrichtung: Rechts");
 		} else {
@@ -347,7 +355,11 @@ public class MainController implements ActionListener, MouseListener {
 		JLabel trainImageLabel = new JLabel();
 		ImageIcon icon = new ImageIcon();
 		Image img;
-		icon = new ImageIcon(train.getImagePath());
+		if(train.getImagePath() != null){
+			icon = new ImageIcon(train.getImagePath());
+		}else{
+			icon = new ImageIcon("images/default_train.png");
+		}
 		img = icon.getImage();
 		img = img.getScaledInstance(70, 70, java.awt.Image.SCALE_SMOOTH);
 		icon = new ImageIcon(img);
@@ -398,6 +410,7 @@ public class MainController implements ActionListener, MouseListener {
 		newTrainPanel.add(trainActionPanel, c);
 
 		JLabel lightLabel = new JLabel();
+		lightLabel.setName("lightLabel");
 		if (train.isLightActive()) {
 			lightLabel.setText("Licht: An");
 		} else {
@@ -584,11 +597,13 @@ public class MainController implements ActionListener, MouseListener {
 		panel.add(trainModelDesc, c);
 
 		JLabel speedLabel = new JLabel("Geschwindigkeit: " + train.getSpeed() + "%");
+		speedLabel.setName("speedLabel");
 		c.gridx = 2;
 		c.gridy = 0;
 		panel.add(speedLabel, c);
 
 		JLabel directionLabel = new JLabel();
+		directionLabel.setName("directionLabel");
 		if (train.isDirectionRight()) {
 			directionLabel.setText("Fahrtrichtung: Rechts");
 		} else {
@@ -602,7 +617,11 @@ public class MainController implements ActionListener, MouseListener {
 		JLabel trainImageLabel = new JLabel();
 		ImageIcon icon = new ImageIcon();
 		Image img;
-		icon = new ImageIcon(train.getImagePath());
+		if(train.getImagePath() != null){
+			icon = new ImageIcon(train.getImagePath());
+		}else{
+			icon = new ImageIcon("images/default_train.png");
+		}
 		img = icon.getImage();
 		img = img.getScaledInstance(70, 70, java.awt.Image.SCALE_SMOOTH);
 		icon = new ImageIcon(img);
@@ -654,6 +673,7 @@ public class MainController implements ActionListener, MouseListener {
 		panel.add(trainActionPanel, c);
 		
 		JLabel lightLabel = new JLabel();
+		lightLabel.setName("lightLabel");
 		if (train.isLightActive()) {
 			lightLabel.setText("Licht: An");
 		} else {
@@ -720,8 +740,204 @@ public class MainController implements ActionListener, MouseListener {
 				this.selectedTrainPanel = activePanel;
 				activePanel.setBackground(new Color(210, 210, 210));
 			}
+			// Hole den ausgewählten Zug über den Panel Namen
+			this.selectedTrain = this.trainCollection.getTrainByName(activePanel.getName());
 
+			// Hole sich alle relevanten Labels aus dem ausgewählten Panel, um ihre Werte später manipulieren zu können
+			for (Component component : activePanel.getComponents()) {
+				if(("speedLabel").equals(component.getName())){
+					this.selectedSpeedLabel = (JLabel)component;
+				}
+				if(("directionLabel").equals(component.getName())){
+					this.selectedDirectionsLabel = (JLabel)component;
+				}
+				if(("lightLabel").equals(component.getName())){
+					this.selectedLightLabel = (JLabel)component;
+				}
+			}
+			this.drawControllerArea();
 		}
+	}
+	
+	public void drawControllerArea() {
+		this.controllerAreaPanel.removeAll();
+		JPanel trainControlPanel = new JPanel();
+		trainControlPanel.setLayout(new GridBagLayout());
+
+		// Erstelle Regeln für GridBagLayout.
+		GridBagConstraints c = new GridBagConstraints();
+		Insets set = new Insets(10, 10, 10, 10);
+		c.insets = set;
+		c.fill = GridBagConstraints.BOTH;
+		c.weightx = 1.0;
+		c.weighty = 1.0;
+
+		// Füge Zugbild hinzu
+		JLabel trainImageLabel = new JLabel();
+		ImageIcon icon = new ImageIcon();
+		Image img;
+		icon = new ImageIcon("D:/Bilder/Saved Pictures/Beautiful/Background/stock-photo-154870507.jpg");
+		img = icon.getImage();
+		img = img.getScaledInstance(150, 150, java.awt.Image.SCALE_SMOOTH);
+		icon = new ImageIcon(img);
+		trainImageLabel.setIcon(icon);
+
+		// JPanel panel1 = new JPanel();
+		// panel1.setBorder(BorderFactory.createTitledBorder("Panel1"));
+		c.gridx = 0;
+		c.gridy = 0;
+		c.gridwidth = 1;
+		c.gridheight = 2;
+		c.anchor = GridBagConstraints.PAGE_START;
+		c.fill = GridBagConstraints.VERTICAL;
+		trainControlPanel.add(trainImageLabel, c);
+
+		JLabel trainName = new JLabel("Random Train Name Focker");
+		Font myFont = new Font(trainName.getFont().getFontName(), Font.BOLD, 16);
+		trainName.setFont(myFont);
+
+		// JPanel panel2 = new JPanel();
+		// panel2.setBorder(BorderFactory.createTitledBorder("Panel2"));
+		c.gridx = 1;
+		c.gridy = 0;
+		c.gridwidth = 2;
+		c.gridheight = 1;
+		c.anchor = GridBagConstraints.CENTER;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		trainControlPanel.add(trainName, c);
+
+		JLabel trainModelDesc = new JLabel("Dampflok Mampflol");
+		myFont = new Font(trainModelDesc.getFont().getFontName(), Font.PLAIN, 14);
+		trainModelDesc.setFont(myFont);
+		c.gridx = 1;
+		c.gridy = 1;
+		c.gridwidth = 2;
+		c.gridheight = 1;
+		c.anchor = GridBagConstraints.PAGE_START;
+		trainControlPanel.add(trainModelDesc, c);
+
+		JLabel speedLabel = new JLabel("Geschwindigkeit:");
+		c.gridx = 0;
+		c.gridy = 2;
+		c.gridwidth = 1;
+		c.anchor = GridBagConstraints.CENTER;
+		trainControlPanel.add(speedLabel, c);
+
+		JPanel speedPanel = new JPanel();
+
+		JSlider speedSlider = new JSlider();
+		speedSlider.setMajorTickSpacing(100);
+		speedSlider.setMinorTickSpacing(1);
+		speedSlider.setPaintTicks(true);
+		speedSlider.setPaintLabels(true);
+		speedSlider.setValue(0);
+		speedPanel.add(speedSlider);
+
+		JButton stopTrainButton = new JButton("Stop");
+		stopTrainButton.setBackground(Color.RED);
+		stopTrainButton.setForeground(Color.RED);
+		ImageIcon iconStop = new ImageIcon();
+		Image imgStop;
+		iconStop = new ImageIcon("images/stop.png");
+		imgStop = iconStop.getImage();
+		imgStop = imgStop.getScaledInstance(15, 15, java.awt.Image.SCALE_SMOOTH);
+		iconStop = new ImageIcon(imgStop);
+		stopTrainButton.setIcon(iconStop);
+
+		speedPanel.add(stopTrainButton);
+
+		c.gridx = 1;
+		c.gridy = 2;
+		c.gridwidth = 2;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.anchor = GridBagConstraints.CENTER;
+		trainControlPanel.add(speedPanel, c);
+
+		JLabel directionLabel = new JLabel("Fahrtrichtung:");
+		c.gridx = 0;
+		c.gridy = 3;
+		c.gridwidth = 1;
+		trainControlPanel.add(directionLabel, c);
+
+		JPanel directionPanel = new JPanel(new FlowLayout());
+		
+		ButtonGroup directionButtonGroup = new ButtonGroup();
+		
+		JToggleButton toggleLeft = new JToggleButton("Links");
+		toggleLeft.setPreferredSize(new Dimension(85, 25));
+		ImageIcon iconTurnLeft = new ImageIcon();
+		Image imgTurnLeft;
+		iconTurnLeft = new ImageIcon("images/turn_left.png");
+		imgTurnLeft = iconTurnLeft.getImage();
+		imgTurnLeft = imgTurnLeft.getScaledInstance(15, 15, java.awt.Image.SCALE_SMOOTH);
+		iconTurnLeft = new ImageIcon(imgTurnLeft);
+		toggleLeft.setIcon(iconTurnLeft);
+		
+		JToggleButton toggleRight = new JToggleButton("Rechts");
+		toggleRight.setPreferredSize(new Dimension(85, 25));
+		ImageIcon iconTurnRight = new ImageIcon();
+		Image imgTurnRight;
+		iconTurnRight = new ImageIcon("images/turn_right.png");
+		imgTurnRight = iconTurnRight.getImage();
+		imgTurnRight = imgTurnRight.getScaledInstance(15, 15, java.awt.Image.SCALE_SMOOTH);
+		iconTurnRight = new ImageIcon(imgTurnRight);
+		toggleRight.setIcon(iconTurnRight);
+		
+		directionButtonGroup.add(toggleLeft);
+		directionButtonGroup.add(toggleRight);
+	
+		directionButtonGroup.setSelected(toggleLeft.getModel(), true);
+	
+		directionPanel.add(toggleLeft);
+		directionPanel.add(toggleRight);
+		
+		c.gridx = 2;
+		c.gridy = 3;
+		c.gridwidth = 1;
+		trainControlPanel.add(directionPanel, c);
+
+		JLabel lightLabel = new JLabel("Licht:");
+		c.gridx = 0;
+		c.gridy = 4;
+		c.gridwidth = 1;
+		trainControlPanel.add(lightLabel, c);
+
+		JPanel lightPanel = new JPanel();
+		
+		JButton switchLightButton = new JButton();
+		switchLightButton.setBorder(BorderFactory.createEmptyBorder());
+		switchLightButton.setContentAreaFilled(false);
+		ImageIcon iconSwitch = new ImageIcon();
+		Image imgSwitch;
+		iconSwitch = new ImageIcon("images/switch_right_green.png");
+		imgSwitch = iconSwitch.getImage();
+		imgSwitch = imgSwitch.getScaledInstance(35, 35, java.awt.Image.SCALE_SMOOTH);
+		iconSwitch = new ImageIcon(imgSwitch);
+		switchLightButton.setIcon(iconSwitch);
+		
+		JLabel lightBulb = new JLabel();
+		ImageIcon iconLight = new ImageIcon();
+		Image imgLight;
+		iconLight = new ImageIcon("images/lightbulb_on.png");
+		imgLight = iconLight.getImage();
+		imgLight = imgLight.getScaledInstance(50, 50, java.awt.Image.SCALE_SMOOTH);
+		iconLight = new ImageIcon(imgLight);
+		lightBulb.setIcon(iconLight);
+		
+		lightPanel.add(switchLightButton);
+		lightPanel.add(lightBulb);
+
+		JPanel flowPanel = new JPanel(new FlowLayout());
+		flowPanel.add(lightPanel);
+		
+		c.gridx = 2;
+		c.gridy = 4;
+		c.gridwidth = 1;
+		c.anchor = GridBagConstraints.CENTER;
+		trainControlPanel.add(lightPanel, c);
+
+		this.controllerAreaPanel.add(trainControlPanel);
+		this.controllerAreaPanel.revalidate();
 	}
 
 }

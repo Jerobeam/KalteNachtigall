@@ -91,7 +91,9 @@ public class Main {
 		frame.add(leftPanel, BorderLayout.WEST);
 
 		JPanel trainsPanel = new JPanel();
-		MainController mainController = new MainController(frame, trainsPanel, trainCollection);
+		JPanel trainControlPanel = new JPanel(new GridBagLayout());
+		trainControlPanel.add(new JLabel("Kein Zug ausgewählt"));
+		MainController mainController = new MainController(frame, trainsPanel, trainControlPanel, trainCollection);
 		trainsPanel.setLayout(new BoxLayout(trainsPanel, BoxLayout.Y_AXIS));
 
 		JScrollPane scrollPanel = new JScrollPane(trainsPanel);
@@ -106,16 +108,18 @@ public class Main {
 
 		JPanel rightPanel = new JPanel();
 		rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.Y_AXIS));
-		// rightPanel.setPreferredSize(new Dimension(350, 500));
-		// rightPanel.setMaximumSize(new Dimension(350, 500));
+		// controllerAreaPanel.setPreferredSize(new Dimension(350, 500));
+		// controllerAreaPanel.setMaximumSize(new Dimension(350, 500));
+//		trainControlPanel.setBorder(BorderFactory.createTitledBorder("trainControlPanel"));
 
-		drawControllerArea(rightPanel);
+		rightPanel.add(trainControlPanel);
+		// drawControllerArea(rightPanel);
 
 		frame.add(rightPanel);
 
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		// frame.setSize(800, 600);
-		frame.pack();
+		 frame.setSize(850, 550);
+//		frame.pack();
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 		frame.setLocation(dim.width / 2 - frame.getSize().width / 2, dim.height / 2 - frame.getSize().height / 2);
 
@@ -240,19 +244,19 @@ public class Main {
 		trainControlPanel.add(directionLabel, c);
 
 		JPanel directionPanel = new JPanel(new FlowLayout());
-		
+
 		ButtonGroup directionButtonGroup = new ButtonGroup();
-		
+
 		JToggleButton toggleLeft = new JToggleButton("Links");
 		toggleLeft.setPreferredSize(new Dimension(85, 25));
 		ImageIcon iconTurnLeft = new ImageIcon();
 		Image imgTurnLeft;
-		iconTurnLeft = new ImageIcon("images/turn_right.png");
+		iconTurnLeft = new ImageIcon("images/turn_left.png");
 		imgTurnLeft = iconTurnLeft.getImage();
 		imgTurnLeft = imgTurnLeft.getScaledInstance(15, 15, java.awt.Image.SCALE_SMOOTH);
 		iconTurnLeft = new ImageIcon(imgTurnLeft);
 		toggleLeft.setIcon(iconTurnLeft);
-		
+
 		JToggleButton toggleRight = new JToggleButton("Rechts");
 		toggleRight.setPreferredSize(new Dimension(85, 25));
 		ImageIcon iconTurnRight = new ImageIcon();
@@ -262,15 +266,15 @@ public class Main {
 		imgTurnRight = imgTurnRight.getScaledInstance(15, 15, java.awt.Image.SCALE_SMOOTH);
 		iconTurnRight = new ImageIcon(imgTurnRight);
 		toggleRight.setIcon(iconTurnRight);
-		
+
 		directionButtonGroup.add(toggleLeft);
 		directionButtonGroup.add(toggleRight);
-	
+
 		directionButtonGroup.setSelected(toggleLeft.getModel(), true);
-	
+
 		directionPanel.add(toggleLeft);
 		directionPanel.add(toggleRight);
-		
+
 		c.gridx = 2;
 		c.gridy = 3;
 		c.gridwidth = 1;
@@ -283,7 +287,7 @@ public class Main {
 		trainControlPanel.add(lightLabel, c);
 
 		JPanel lightPanel = new JPanel();
-		
+
 		JButton switchLightButton = new JButton();
 		switchLightButton.setBorder(BorderFactory.createEmptyBorder());
 		switchLightButton.setContentAreaFilled(false);
@@ -294,7 +298,7 @@ public class Main {
 		imgSwitch = imgSwitch.getScaledInstance(35, 35, java.awt.Image.SCALE_SMOOTH);
 		iconSwitch = new ImageIcon(imgSwitch);
 		switchLightButton.setIcon(iconSwitch);
-		
+
 		JLabel lightBulb = new JLabel();
 		ImageIcon iconLight = new ImageIcon();
 		Image imgLight;
@@ -303,18 +307,17 @@ public class Main {
 		imgLight = imgLight.getScaledInstance(50, 50, java.awt.Image.SCALE_SMOOTH);
 		iconLight = new ImageIcon(imgLight);
 		lightBulb.setIcon(iconLight);
-		
+
 		lightPanel.add(switchLightButton);
 		lightPanel.add(lightBulb);
 
 		JPanel flowPanel = new JPanel(new FlowLayout());
 		flowPanel.add(lightPanel);
-		
+
 		c.gridx = 2;
 		c.gridy = 4;
 		c.gridwidth = 1;
 		c.anchor = GridBagConstraints.CENTER;
-//		c.fill = GridBagConstraints.BOTH;
 		trainControlPanel.add(lightPanel, c);
 
 		panel.add(trainControlPanel);

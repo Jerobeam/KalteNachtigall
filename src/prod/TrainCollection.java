@@ -39,7 +39,7 @@ public class TrainCollection {
 	
 	// Methode zum Überprüfen, ob Zug bereits existiert
 	public boolean trainIsAlreadyExisting(String name){
-		for (Train t : trains) {
+		for (Train t : this.trains) {
 			if(t.getName().equals(name)){
 				return true;
 			}
@@ -56,7 +56,7 @@ public class TrainCollection {
 	// Methode zum Debuggen
 	public void printAllTrain(){
 		int i = 0;
-		for (Train train : trains) {
+		for (Train train : this.trains) {
 			System.out.println("Zug Nr. " + i + ": " + train.getName());
 			i++;
 		}
