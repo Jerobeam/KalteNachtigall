@@ -3,6 +3,7 @@ package prod;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -242,13 +243,30 @@ public class Main {
 		// c.gridy = 3;
 		// c.gridwidth = 1;
 		// trainControlPanel.add(panel11, c);
+		
+		JPanel directionPanel = new JPanel(new FlowLayout());
+		
+		directionPanel.add(new JLabel("Links"));
+		
+		JButton switchDirectionButton = new JButton();
+		switchDirectionButton.setBorder(BorderFactory.createEmptyBorder());
+		switchDirectionButton.setContentAreaFilled(false);
+		ImageIcon iconSwitch = new ImageIcon();
+		Image imgSwitch;
+		iconSwitch = new ImageIcon("images/switch_left.png");
+		imgSwitch = iconSwitch.getImage();
+		imgSwitch = imgSwitch.getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH);
+		iconSwitch = new ImageIcon(imgSwitch);
+		switchDirectionButton.setIcon(iconSwitch);
 
-		JPanel panel12 = new JPanel();
-		panel12.setBorder(BorderFactory.createTitledBorder("panel12"));
+		directionPanel.add(switchDirectionButton);
+		
+		directionPanel.add(new JLabel("Rechts"));
+		
 		c.gridx = 2;
 		c.gridy = 3;
 		c.gridwidth = 1;
-		trainControlPanel.add(panel12, c);
+		trainControlPanel.add(directionPanel, c);
 
 		JLabel lightLabel = new JLabel("Licht:");
 		c.gridx = 0;
