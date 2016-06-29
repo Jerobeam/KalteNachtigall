@@ -23,6 +23,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -34,9 +35,12 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
+import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+
+import com.sun.javafx.event.DirectEvent;
 
 import controller.MainController;
 
@@ -45,7 +49,6 @@ public class Main {
 	private static TrainCollection trainCollection = new TrainCollection();
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
 
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
@@ -197,7 +200,6 @@ public class Main {
 		c.gridx = 0;
 		c.gridy = 2;
 		c.gridwidth = 1;
-		c.fill = GridBagConstraints.HORIZONTAL;
 		c.anchor = GridBagConstraints.CENTER;
 		trainControlPanel.add(speedLabel, c);
 
@@ -237,31 +239,37 @@ public class Main {
 		c.gridwidth = 1;
 		trainControlPanel.add(directionLabel, c);
 
-		// JPanel panel11 = new JPanel();
-		// panel11.setBorder(BorderFactory.createTitledBorder("panel11"));
-		// c.gridx = 1;
-		// c.gridy = 3;
-		// c.gridwidth = 1;
-		// trainControlPanel.add(panel11, c);
-		
 		JPanel directionPanel = new JPanel(new FlowLayout());
 		
-		directionPanel.add(new JLabel("Links"));
+		ButtonGroup directionButtonGroup = new ButtonGroup();
 		
-		JButton switchDirectionButton = new JButton();
-		switchDirectionButton.setBorder(BorderFactory.createEmptyBorder());
-		switchDirectionButton.setContentAreaFilled(false);
-		ImageIcon iconSwitch = new ImageIcon();
-		Image imgSwitch;
-		iconSwitch = new ImageIcon("images/switch_left.png");
-		imgSwitch = iconSwitch.getImage();
-		imgSwitch = imgSwitch.getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH);
-		iconSwitch = new ImageIcon(imgSwitch);
-		switchDirectionButton.setIcon(iconSwitch);
-
-		directionPanel.add(switchDirectionButton);
+		JToggleButton toggleLeft = new JToggleButton("Links");
+		toggleLeft.setPreferredSize(new Dimension(85, 25));
+		ImageIcon iconTurnLeft = new ImageIcon();
+		Image imgTurnLeft;
+		iconTurnLeft = new ImageIcon("images/turn_right.png");
+		imgTurnLeft = iconTurnLeft.getImage();
+		imgTurnLeft = imgTurnLeft.getScaledInstance(15, 15, java.awt.Image.SCALE_SMOOTH);
+		iconTurnLeft = new ImageIcon(imgTurnLeft);
+		toggleLeft.setIcon(iconTurnLeft);
 		
-		directionPanel.add(new JLabel("Rechts"));
+		JToggleButton toggleRight = new JToggleButton("Rechts");
+		toggleRight.setPreferredSize(new Dimension(85, 25));
+		ImageIcon iconTurnRight = new ImageIcon();
+		Image imgTurnRight;
+		iconTurnRight = new ImageIcon("images/turn_right.png");
+		imgTurnRight = iconTurnRight.getImage();
+		imgTurnRight = imgTurnRight.getScaledInstance(15, 15, java.awt.Image.SCALE_SMOOTH);
+		iconTurnRight = new ImageIcon(imgTurnRight);
+		toggleRight.setIcon(iconTurnRight);
+		
+		directionButtonGroup.add(toggleLeft);
+		directionButtonGroup.add(toggleRight);
+	
+		directionButtonGroup.setSelected(toggleLeft.getModel(), true);
+	
+		directionPanel.add(toggleLeft);
+		directionPanel.add(toggleRight);
 		
 		c.gridx = 2;
 		c.gridy = 3;
@@ -274,19 +282,40 @@ public class Main {
 		c.gridwidth = 1;
 		trainControlPanel.add(lightLabel, c);
 
-		// JPanel panel14 = new JPanel();
-		// panel14.setBorder(BorderFactory.createTitledBorder("panel14"));
-		// c.gridx = 1;
-		// c.gridy = 4;
-		// c.gridwidth = 1;
-		// trainControlPanel.add(panel14, c);
+		JPanel lightPanel = new JPanel();
+		
+		JButton switchLightButton = new JButton();
+		switchLightButton.setBorder(BorderFactory.createEmptyBorder());
+		switchLightButton.setContentAreaFilled(false);
+		ImageIcon iconSwitch = new ImageIcon();
+		Image imgSwitch;
+		iconSwitch = new ImageIcon("images/switch_left.png");
+		imgSwitch = iconSwitch.getImage();
+		imgSwitch = imgSwitch.getScaledInstance(35, 35, java.awt.Image.SCALE_SMOOTH);
+		iconSwitch = new ImageIcon(imgSwitch);
+		switchLightButton.setIcon(iconSwitch);
+		
+		JLabel lightBulb = new JLabel();
+		ImageIcon iconLight = new ImageIcon();
+		Image imgLight;
+		iconLight = new ImageIcon("images/lightbulb_on.png");
+		imgLight = iconLight.getImage();
+		imgLight = imgLight.getScaledInstance(50, 50, java.awt.Image.SCALE_SMOOTH);
+		iconLight = new ImageIcon(imgLight);
+		lightBulb.setIcon(iconLight);
+		
+		lightPanel.add(switchLightButton);
+		lightPanel.add(lightBulb);
 
-		JPanel panel15 = new JPanel();
-		panel15.setBorder(BorderFactory.createTitledBorder("panel15"));
+		JPanel flowPanel = new JPanel(new FlowLayout());
+		flowPanel.add(lightPanel);
+		
 		c.gridx = 2;
 		c.gridy = 4;
 		c.gridwidth = 1;
-		trainControlPanel.add(panel15, c);
+		c.anchor = GridBagConstraints.CENTER;
+//		c.fill = GridBagConstraints.BOTH;
+		trainControlPanel.add(lightPanel, c);
 
 		panel.add(trainControlPanel);
 	}
