@@ -119,15 +119,14 @@ public class MainController implements ActionListener, MouseListener, ChangeList
 				return;
 			}
 
-			// Wenn beide Fälle nicht eintreten, füge Zug der trainCollection
-			// hinzu
-			Train newTrain = new Train(trainName, trainModelDesc, imagePath);
-			this.trainCollection.addTrain(newTrain);
 			trainDialog.dispose();
+			Train newTrain = new Train(trainName, trainModelDesc, imagePath);
 
-			// Nach schließen des Dialoges muss der neue Zug auch im UI erstellt
-			// werden
+			// Nach schließen des Dialoges muss der neue Zug im UI erstellt werden
 			this.drawTrainPanel(newTrain);
+			
+			// Wenn beide Fälle nicht eintreten, füge Zug der trainCollection hinzu		
+			this.trainCollection.addTrain(newTrain);
 
 		} else if (e.getActionCommand().equals("editTrain")) {
 			// imagePath zurücksetzen
@@ -183,7 +182,15 @@ public class MainController implements ActionListener, MouseListener, ChangeList
 			} else {
 				return;
 			}
-
+			
+			// Wenn alle Züge gelöscht wurden, blende Platzhalter-Label wieder ein
+			if(this.trainCollection.getTrains().isEmpty()){
+				JPanel noTrainPanel = new JPanel(new GridBagLayout());
+				JLabel noTrainLabel = new JLabel("Noch kein Zug erstellt");
+				noTrainPanel.add(noTrainLabel);
+				this.trainsPanel.add(noTrainPanel);
+			}
+			
 		} else if (e.getActionCommand().equals("saveTrain")) {
 			String trainName = trainNameTextField.getText();
 			String trainModelDesc = trainModelDescTextField.getText();
@@ -291,13 +298,16 @@ public class MainController implements ActionListener, MouseListener, ChangeList
 			JPanel trainEntry;
 			JLabel speedLabel;
 			for (Component c1 : this.trainsPanel.getComponents()) {
-				// Gehe über jede Komponente innerhalb eines Listeneintrages um das Geschwindigkeitslabel zu manipulieren
-				trainEntry = (JPanel)c1;
-				for (Component c2 : trainEntry.getComponents()) {
-					// Ist das aktuelle Objekt das Geschwindigkeitslabel, so verändere es
-					if(("speedLabel").equals(c2.getName())){
-						speedLabel = (JLabel)c2;
-						speedLabel.setText("Geschwindigkeit: 0%");
+				// Überprüfe sicherheitshalber, ob Komponenten ein Panel ist
+				if (c1 instanceof JPanel) {
+					trainEntry = (JPanel) c1;
+					// Gehe über jede Komponente innerhalb eines Listeneintrages um das Geschwindigkeitslabel zu manipulieren
+					for (Component c2 : trainEntry.getComponents()) {
+						// Ist das aktuelle Objekt das Geschwindigkeitslabel, so verändere es
+						if (("speedLabel").equals(c2.getName())) {
+							speedLabel = (JLabel) c2;
+							speedLabel.setText("Geschwindigkeit: 0%");
+						}
 					}
 				}
 			}
@@ -418,6 +428,12 @@ public class MainController implements ActionListener, MouseListener, ChangeList
 	}
 
 	public void drawTrainPanel(Train train) {
+		// Lösche das Platzhalter-Label aus dem Panel, wenn es keinen Zug gibt
+		if (this.trainCollection.getTrains().isEmpty()) {
+			this.trainsPanel.removeAll();
+			this.trainsPanel.repaint();
+		}
+
 		JPanel newTrainPanel = new JPanel();
 		newTrainPanel.setName(train.getName());
 		// newTrainPanel.setBorder(BorderFactory.createTitledBorder(" "));

@@ -94,8 +94,13 @@ public class Main {
 		leftPanel.setMaximumSize(new Dimension(350, 500));
 		frame.add(leftPanel, BorderLayout.WEST);
 
-		JPanel trainsPanel = new JPanel(new GridBagLayout());
-//		trainsPanel.add(new JLabel("Kein Zug erstellt"));
+		JPanel trainsPanel = new JPanel();
+		JPanel noTrainPanel = new JPanel(new GridBagLayout());
+		JLabel noTrainLabel = new JLabel("Noch kein Zug erstellt");
+		
+		noTrainPanel.add(noTrainLabel);
+		trainsPanel.add(noTrainPanel);
+		
 		JPanel trainControlPanel = new JPanel(new GridBagLayout());
 		trainControlPanel.add(new JLabel("Kein Zug ausgewählt"));
 		MainController mainController = new MainController(frame, trainsPanel, trainControlPanel, trainCollection);
