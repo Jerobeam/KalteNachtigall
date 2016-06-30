@@ -58,7 +58,7 @@ public class TrainCollection {
 	}
 	
 	// Methode zum Debuggen
-	public void printAllTrain(){
+	public void printAllTrains(){
 		int i = 0;
 		for (Train train : this.trains) {
 			System.out.println("Zug Nr. " + i + ": " + train.getName());
@@ -73,4 +73,5 @@ public class TrainCollection {
 			}
 		}
 	}
+	
 }

@@ -1,5 +1,7 @@
 package prod;
 
+import static java.awt.event.InputEvent.CTRL_DOWN_MASK;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -37,13 +39,13 @@ import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
+import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import com.sun.glass.events.WindowEvent;
 import com.sun.javafx.event.DirectEvent;
-
-import controller.MainController;
 
 public class Main {
 
@@ -66,7 +68,7 @@ public class Main {
 				| UnsupportedLookAndFeelException e) {
 			e.printStackTrace();
 		}
-		
+
 		// Erstelle Hauptframe
 		JFrame frame = new JFrame("Lokomotivführer 2.0");
 
@@ -74,8 +76,21 @@ public class Main {
 		JMenuBar menuBar = new JMenuBar();
 		JMenu menuEntry = new JMenu("Menü");
 
+		// Erstellen des "Fenster schließen"-Eintrags mit Icon
+		JMenuItem menuNewTrain = new JMenuItem("Neuer Zug");
+		menuNewTrain.setAccelerator(KeyStroke.getKeyStroke('N', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+		ImageIcon iconAdd = new ImageIcon();
+		Image imgAdd;
+		iconAdd = new ImageIcon("images/add.png");
+		imgAdd = iconAdd.getImage();
+		imgAdd = imgAdd.getScaledInstance(15, 15, java.awt.Image.SCALE_SMOOTH);
+		iconAdd = new ImageIcon(imgAdd);
+		menuNewTrain.setIcon(iconAdd);
+		menuEntry.add(menuNewTrain);
+
 		// Erstellen des "Speichern"-Eintrags mit Icon
 		JMenuItem menuSave = new JMenuItem("Speichern");
+		menuSave.setAccelerator(KeyStroke.getKeyStroke('S', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 		ImageIcon iconSave = new ImageIcon();
 		Image imgSave;
 		iconSave = new ImageIcon("images/save.png");
@@ -84,7 +99,22 @@ public class Main {
 		iconSave = new ImageIcon(imgSave);
 		menuSave.setIcon(iconSave);
 		menuEntry.add(menuSave);
+
+		// Erstellen des "Fenster schließen"-Eintrags mit Icon
+		JMenuItem menuClose = new JMenuItem("Fenster schließen");
+		menuClose.setAccelerator(KeyStroke.getKeyStroke('W', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+		ImageIcon iconClose = new ImageIcon();
+		Image imgClose;
+		iconClose = new ImageIcon("images/close.png");
+		imgClose = iconClose.getImage();
+		imgClose = imgClose.getScaledInstance(15, 15, java.awt.Image.SCALE_SMOOTH);
+		iconClose = new ImageIcon(imgClose);
+		menuClose.setIcon(iconClose);
+		menuEntry.add(menuClose);
+
+		// Füge Menueintrag der Menubar hinzu
 		menuBar.add(menuEntry);
+		// Setze MenuBar in den Frame		
 		frame.setJMenuBar(menuBar);
 
 		JPanel leftPanel = new JPanel();
@@ -96,17 +126,30 @@ public class Main {
 
 		JPanel trainsPanel = new JPanel();
 		JPanel noTrainPanel = new JPanel(new GridBagLayout());
-		JLabel noTrainLabel = new JLabel("Noch kein Zug erstellt");
-		
+		JLabel noTrainLabel = new JLabel("Noch keinen Zug erstellt");
+
 		noTrainPanel.add(noTrainLabel);
 		trainsPanel.add(noTrainPanel);
-		
+
 		JPanel trainControlPanel = new JPanel(new GridBagLayout());
 		trainControlPanel.add(new JLabel("Kein Zug ausgewählt"));
-		
+
 		JButton stopAllButton = new JButton("Alle Züge stoppen");
-		
-		MainController mainController = new MainController(frame, trainsPanel, trainControlPanel, trainCollection, stopAllButton);
+
+		Controller controller = new Controller(frame, trainsPanel, trainControlPanel, trainCollection, stopAllButton);
+
+		// Menueintrag "Speichern" Eintrag beim Controller anmelden
+		menuSave.addActionListener(controller);
+		menuSave.setActionCommand("saveData");
+
+		// Menueintrag "Schließen" Eintrag beim Controller anmelden
+		menuClose.addActionListener(controller);
+		menuClose.setActionCommand("close");
+
+		// Menueintrag "Neuer Zug" Eintrag beim Controller anmelden
+		menuNewTrain.addActionListener(controller);
+		menuNewTrain.setActionCommand("addTrain");
+
 		trainsPanel.setLayout(new BoxLayout(trainsPanel, BoxLayout.Y_AXIS));
 
 		JScrollPane scrollPanel = new JScrollPane(trainsPanel);
@@ -117,13 +160,8 @@ public class Main {
 		JButton addTrainButton = new JButton("Neuer Zug");
 		addTrainButton.setAlignmentX(Component.RIGHT_ALIGNMENT);
 		addTrainButton.setActionCommand("addTrain");
-		addTrainButton.addActionListener(mainController);
-		//Füge Icon zu addTrainButton hinzu
-		ImageIcon iconAdd = new ImageIcon();
-		Image imgAdd;
-		iconAdd = new ImageIcon("images/add.png");
-		imgAdd = iconAdd.getImage();
-		imgAdd = imgAdd.getScaledInstance(10, 10, java.awt.Image.SCALE_SMOOTH);
+		addTrainButton.addActionListener(controller);
+		imgAdd = imgAdd.getScaledInstance(15, 15, java.awt.Image.SCALE_SMOOTH);
 		iconAdd = new ImageIcon(imgAdd);
 		addTrainButton.setIcon(iconAdd);
 
@@ -137,15 +175,15 @@ public class Main {
 		frame.add(rightPanel);
 
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
 		frame.setSize(850, 550);
-		//		frame.pack();
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 		frame.setLocation(dim.width / 2 - frame.getSize().width / 2, dim.height / 2 - frame.getSize().height / 2);
 
 		JPanel stopAllPanel = new JPanel(new BorderLayout());
 
 		stopAllButton.setEnabled(false);
-		stopAllButton.addActionListener(mainController);
+		stopAllButton.addActionListener(controller);
 		stopAllButton.setActionCommand("stopAllTrains");
 		stopAllButton.setBackground(Color.RED);
 		stopAllButton.setForeground(Color.RED);
@@ -163,6 +201,9 @@ public class Main {
 		rightPanel.add(stopAllPanel);
 
 		frame.setVisible(true);
+		frame.addWindowListener(controller);
+
+		controller.initializeFromJSON();
 	}
 
 	public static void drawControllerArea(JPanel panel) {

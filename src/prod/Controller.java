@@ -1,14 +1,20 @@
-package controller;
+package prod;
 
 import java.awt.event.ActionEvent;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Iterator;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -17,10 +23,12 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import prod.Train;
-import prod.TrainCollection;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
-public class MainController implements ActionListener, MouseListener, ChangeListener {
+public class Controller implements ActionListener, MouseListener, ChangeListener, WindowListener {
 
 	private JFrame mainFrame;
 	private JPanel trainsPanel;
@@ -49,9 +57,10 @@ public class MainController implements ActionListener, MouseListener, ChangeList
 	private JLabel controllerTrainName;
 	private JLabel controllerTrainModelDesc;
 	private JButton deleteImageButton;
+	private boolean isDirty;
 
-	public MainController(JFrame mainFrame, JPanel trainsPanel, JPanel controllerAreaPanel,
-			TrainCollection trainCollection, JButton stopAllButton) {
+	public Controller(JFrame mainFrame, JPanel trainsPanel, JPanel controllerAreaPanel, TrainCollection trainCollection,
+			JButton stopAllButton) {
 		this.mainFrame = mainFrame;
 		this.trainsPanel = trainsPanel;
 		this.controllerAreaPanel = controllerAreaPanel;
@@ -126,9 +135,12 @@ public class MainController implements ActionListener, MouseListener, ChangeList
 
 			// Nach schließen des Dialoges muss der neue Zug im UI erstellt werden
 			this.drawTrainPanel(newTrain);
-			
+
 			// Wenn beide Fälle nicht eintreten, füge Zug der trainCollection hinzu		
 			this.trainCollection.addTrain(newTrain);
+
+			// Merke, dass trainCollection verändert wurde
+			this.isDirty = true;
 
 		} else if (e.getActionCommand().equals("editTrain")) {
 			// imagePath zurücksetzen
@@ -160,7 +172,7 @@ public class MainController implements ActionListener, MouseListener, ChangeList
 			this.affectedTrain = this.trainCollection.getTrainByName(trainName);
 
 			// Frage nach, onb Zug wirklich gelöscht werden soll
-			int confirmResult = JOptionPane.showConfirmDialog(this.trainsPanel,
+			int confirmResult = JOptionPane.showConfirmDialog(this.mainFrame,
 					"Soll Zug " + trainName + " wirklich gelöscht werden?", "Zug " + trainName + " löschen?",
 					JOptionPane.YES_NO_OPTION);
 
@@ -180,22 +192,25 @@ public class MainController implements ActionListener, MouseListener, ChangeList
 				this.trainsPanel.remove(this.affectedPanel);
 				this.trainsPanel.revalidate();
 				this.trainsPanel.repaint();
+				
+				// Merke, dass trainCollection verändert wurde
+				this.isDirty = true;
 
 			} else {
 				return;
 			}
-			
+
 			// Wenn alle Züge gelöscht wurden, blende Platzhalter-Label wieder ein
-			if(this.trainCollection.getTrains().isEmpty()){
+			if (this.trainCollection.getTrains().isEmpty()) {
 				JPanel noTrainPanel = new JPanel(new GridBagLayout());
 				JLabel noTrainLabel = new JLabel("Noch kein Zug erstellt");
 				noTrainPanel.add(noTrainLabel);
 				this.trainsPanel.add(noTrainPanel);
-				
+
 				// Deaktiviere stopAllButton
 				stopAllButton.setEnabled(false);
 			}
-			
+
 		} else if (e.getActionCommand().equals("saveTrain")) {
 			String trainName = trainNameTextField.getText();
 			String trainModelDesc = trainModelDescTextField.getText();
@@ -242,9 +257,11 @@ public class MainController implements ActionListener, MouseListener, ChangeList
 
 			trainDialog.dispose();
 
-			// Nach schließen des Dialoges muss der neue Zug auch im UI
-			// aktualisiert werden
+			// Nach schließen des Dialoges muss der neue Zug auch im UI aktualisiert werden
 			this.redrawTrainPanel(this.affectedTrain, affectedPanel);
+
+			// Merke, dass trainCollection verändert wurde
+			this.isDirty = true;
 
 		} else if (e.getActionCommand().equals("stopTrain")) {
 			if (this.selectedTrain.getSpeed() != 0) {
@@ -316,7 +333,13 @@ public class MainController implements ActionListener, MouseListener, ChangeList
 					}
 				}
 			}
+		} else if (e.getActionCommand().equals("saveData")) {
+			this.saveDataToJSON();
+		} else if (e.getActionCommand().equals("close")) {
+			// Schließe Frame
+			this.mainFrame.dispatchEvent(new WindowEvent(mainFrame, WindowEvent.WINDOW_CLOSING));
 		}
+
 	}
 
 	public void openNewDialog() {
@@ -437,14 +460,13 @@ public class MainController implements ActionListener, MouseListener, ChangeList
 		if (this.trainCollection.getTrains().isEmpty()) {
 			this.trainsPanel.removeAll();
 			this.trainsPanel.repaint();
-			
+
 			// Aktiviere stopAllButton
 			stopAllButton.setEnabled(true);
 		}
 
 		JPanel newTrainPanel = new JPanel();
 		newTrainPanel.setName(train.getName());
-		// newTrainPanel.setBorder(BorderFactory.createTitledBorder(" "));
 		newTrainPanel.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
 		newTrainPanel.setPreferredSize(new Dimension(315, 100));
 		newTrainPanel.setMaximumSize(new Dimension(315, 100));
@@ -457,31 +479,32 @@ public class MainController implements ActionListener, MouseListener, ChangeList
 		// Erstelle Regeln für GridBagLayout.
 		GridBagConstraints c = new GridBagConstraints();
 		c.fill = GridBagConstraints.BOTH;
-		// Insets set = new Insets(5, 5, 5, 5);
-		// c.insets = set;
 		c.weightx = 1.0;
 		c.weighty = 1.0;
 
 		// Füge Zugname hinzu
 		JLabel trainName = new JLabel(train.getName());
+		// Modifiziere Schriftart
 		Font boldFont = new Font(trainName.getFont().getFontName(), Font.BOLD, trainName.getFont().getSize());
 		trainName.setFont(boldFont);
-
 		c.gridx = 1;
 		c.gridy = 0;
 		newTrainPanel.add(trainName, c);
 
+		// Füge Modelbeschreibung hinzu
 		JLabel trainModelDesc = new JLabel(train.getModelDesc());
 		c.gridx = 1;
 		c.gridy = 1;
 		newTrainPanel.add(trainModelDesc, c);
 
+		// Füge Geschwindigkeitslabel hinzu
 		JLabel speedLabel = new JLabel("Geschwindigkeit: " + train.getSpeed() + "%");
 		speedLabel.setName("speedLabel");
 		c.gridx = 2;
 		c.gridy = 0;
 		newTrainPanel.add(speedLabel, c);
 
+		// Füge Richtunglabel hinzu
 		JLabel directionLabel = new JLabel();
 		directionLabel.setName("directionLabel");
 		if (train.isDirectionRight()) {
@@ -1144,5 +1167,123 @@ public class MainController implements ActionListener, MouseListener, ChangeList
 			this.selectedTrain.setSpeed(speed);
 			this.selectedSpeedLabel.setText("Geschwindigkeit: " + this.selectedTrain.getSpeed() + "%");
 		}
+	}
+
+	public void initializeFromJSON() {
+		JSONParser parser = new JSONParser();
+		String trainName;
+		String trainModelDesc;
+		String trainImgPath;
+		Boolean trainDirectionRight;
+		Boolean trainLightActive;
+
+		try {
+			Object obj = parser.parse(new FileReader("savedata/trains.json"));
+			//			JSONObject jsonObject = (JSONObject) obj;
+
+			// Loop über alle Zugobjekte im JSON File
+			JSONArray trainsArray = (JSONArray) obj;
+			Iterator<JSONObject> iterator = trainsArray.iterator();
+			while (iterator.hasNext()) {
+				JSONObject trainJSON = (JSONObject) iterator.next();
+				trainName = (String) trainJSON.get("name");
+				trainModelDesc = (String) trainJSON.get("modelDesc");
+				trainImgPath = (String) trainJSON.get("imgPath");
+				trainDirectionRight = (Boolean) trainJSON.get("directionRight");
+				trainLightActive = (Boolean) trainJSON.get("lightActive");
+
+				// Erstelle Zugobjekt mit Werten aus dem JSON File
+				Train newTrain = new Train(trainName, trainModelDesc, trainImgPath);
+				newTrain.setDirectionRight(trainDirectionRight);
+				newTrain.setLightActive(trainLightActive);
+
+				// Zeichne Zugeintrag im UI
+				this.drawTrainPanel(newTrain);
+
+				// Füge neuen Zug der Collection hinzu	
+				this.trainCollection.addTrain(newTrain);
+			}
+
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+
+		this.trainCollection.printAllTrains();
+	}
+
+	public void saveDataToJSON() {
+		JSONArray trainsArray = new JSONArray();
+		JSONObject trainObject;
+
+		// Erstelle JSON Objekte für jeden Zug in der Collection und hänge sie an das JSON Array
+		for (Train t : this.trainCollection.getTrains()) {
+			trainObject = new JSONObject();
+			trainObject.put("name", t.getName());
+			trainObject.put("modelDesc", t.getModelDesc());
+			trainObject.put("imgPath", t.getImagePath());
+			trainObject.put("directionRight", t.isDirectionRight());
+			trainObject.put("lightActive", t.isLightActive());
+			trainsArray.add(trainObject);
+		}
+
+		try {
+
+			FileWriter file = new FileWriter("savedata/trains.json");
+			file.write(trainsArray.toJSONString());
+			file.flush();
+			file.close();
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		JOptionPane.showMessageDialog(trainDialog, "Deine Zugdaten wurden erfolgreich gespeichert",
+				"Speichern erfolgreich", JOptionPane.INFORMATION_MESSAGE);
+		
+		// Merke, dass Daten gespeichert wurden
+		this.isDirty = false;
+	}
+
+	@Override
+	public void windowActivated(WindowEvent arg0) {
+	}
+
+	@Override
+	public void windowClosed(WindowEvent arg0) {
+	}
+
+	@Override
+	public void windowClosing(WindowEvent arg0) {
+		// Prüfe, ob noch ungespeicherte Änderungen vorhanden sind
+		if (isDirty) {
+			int confirmResult = JOptionPane.showConfirmDialog(this.mainFrame,
+					"Ungespeicherte Zugänderungen vor dem Schließen speichern?",
+					"Speichern vor dem Schließen?", JOptionPane.YES_NO_OPTION);
+
+			if (confirmResult == JOptionPane.YES_OPTION) {
+				System.out.println("Save");
+				this.saveDataToJSON();
+			}
+		}
+	}
+
+	@Override
+	public void windowDeactivated(WindowEvent arg0) {
+	}
+
+	@Override
+	public void windowDeiconified(WindowEvent arg0) {
+	}
+
+	@Override
+	public void windowIconified(WindowEvent arg0) {
+	}
+
+	@Override
+	public void windowOpened(WindowEvent arg0) {
 	}
 }
