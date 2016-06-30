@@ -228,8 +228,6 @@ public class Main {
 		icon = new ImageIcon(img);
 		trainImageLabel.setIcon(icon);
 
-		// JPanel panel1 = new JPanel();
-		// panel1.setBorder(BorderFactory.createTitledBorder("Panel1"));
 		c.gridx = 0;
 		c.gridy = 0;
 		c.gridwidth = 1;
@@ -242,8 +240,6 @@ public class Main {
 		Font myFont = new Font(trainName.getFont().getFontName(), Font.BOLD, 16);
 		trainName.setFont(myFont);
 
-		// JPanel panel2 = new JPanel();
-		// panel2.setBorder(BorderFactory.createTitledBorder("Panel2"));
 		c.gridx = 1;
 		c.gridy = 0;
 		c.gridwidth = 2;
@@ -385,103 +381,3 @@ public class Main {
 		panel.add(trainControlPanel);
 	}
 }
-
-// class ButtonController implements ActionListener {
-// private JPanel panel1;
-// private JFrame frame;
-//
-// public ButtonController(JPanel panel1, JFrame frame) {
-// this.panel1 = panel1;
-// this.frame = frame;
-// }
-//
-// public void actionPerformed(ActionEvent action) {
-// JPanel train3 = new JPanel();
-// train3.setBorder(BorderFactory.createTitledBorder("train3"));
-// train3.setPreferredSize(new Dimension(250, 100));
-// train3.setMaximumSize(new Dimension(250, 100));
-// train3.setMinimumSize(new Dimension(250, 100));
-// this.panel1.add(train3);
-// this.panel1.revalidate();
-// }
-// }
-
-// public static void drawControllerArea(JFrame frame) {
-// JPanel trainControlPanel = new JPanel();
-// trainControlPanel.setBorder(BorderFactory.createTitledBorder("Zugkontroller"));
-// trainControlPanel.setLayout(new GridBagLayout());
-//
-// // Erstelle Regeln für GridBagLayout.
-// GridBagConstraints c = new GridBagConstraints();
-// // Regel: Objekt füllt Zelle in X- und Y-Richtung aus.
-// c.fill = GridBagConstraints.BOTH;
-// // Regel: Ausdehnung erfolgt mit Gewichtung 1 in X-Richtung.
-// c.weightx = 1.0;
-// // Regel: Ausdehnung erfolgt mit Gewichtung 1 in Y-Richtung.
-// c.weighty = 1.0;
-//
-// // Erstelle Button für eine Zelle.
-// JPanel panel1 = new JPanel();
-// panel1.setBorder(BorderFactory.createTitledBorder("Panel1"));
-// // Regel: Spalte 0.
-// c.gridx = 0;
-// // Regel: Zeile 0.
-// c.gridy = 0;
-// // Button zur Pane des Fensters hinzufügen.
-// trainControlPanel.add(panel1, c);
-//
-// // Erstelle Button für eine Zelle.
-// JPanel panel2 = new JPanel();
-// panel2.setBorder(BorderFactory.createTitledBorder("Panel2"));
-// // Regel: Spalte 1.
-// c.gridx = 1;
-// // Regel: Zeile 0.
-// c.gridy = 0;
-// // Button zur Pane des Fensters hinzufügen.
-// trainControlPanel.add(panel2, c);
-//
-// // Erstelle Button für eine Zelle.
-// JPanel panel3 = new JPanel();
-// panel3.setBorder(BorderFactory.createTitledBorder("Panel3"));
-// // Regel: Spalte 0.
-// c.gridx = 0;
-// // Regel: Zeile 1.
-// c.gridy = 1;
-// // Button zur Pane des Fensters hinzufügen.
-// trainControlPanel.add(panel3, c);
-//
-// // Erstelle Button für eine Zelle.
-// JPanel panel4 = new JPanel();
-// panel4.setBorder(BorderFactory.createTitledBorder("Panel4"));
-// // Regel: Spalte 1.
-// c.gridx = 1;
-// // Regel: Zeile 1.
-// c.gridy = 1;
-// // Button zur Pane des Fensters hinzufügen.
-// trainControlPanel.add(panel4, c);
-//
-// // Erstelle Button für zwei Zellen (vertikal).
-// JPanel panel5 = new JPanel();
-// panel5.setBorder(BorderFactory.createTitledBorder("Panel5"));
-// // Regel: Spalte 2.
-// c.gridx = 2;
-// // Regel: Zeile 0.
-// c.gridy = 0;
-// // Regel: Button erstreckt sich vertiktal über zwei Zellen.
-// c.gridheight = 2;
-// // Button zur Pane des Fensters hinzufügen.
-// trainControlPanel.add(panel5, c);
-//
-// // Erstelle Button für drei Zellen (horizontal).
-// JPanel panel6 = new JPanel();
-// panel6.setBorder(BorderFactory.createTitledBorder("Panel6"));
-// // Regel: Spalte 0.
-// c.gridx = 0;
-// // Regel: Zeile 3.
-// c.gridy = 3;
-// // Regel: Button erstreckt sich horizontal über drei Zellen.
-// c.gridwidth = 3;
-// // Button zur Pane des Fensters hinzufügen.
-// trainControlPanel.add(panel6, c);
-// frame.add(trainControlPanel);
-// }
