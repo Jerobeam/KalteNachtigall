@@ -221,7 +221,7 @@ public class MainController implements ActionListener, MouseListener, ChangeList
 				img = img.getScaledInstance(150, 150, java.awt.Image.SCALE_SMOOTH);
 				icon = new ImageIcon(img);
 				controllerImageLabel.setIcon(icon);
-				
+
 				//Aktualisieren Namen
 				this.controllerTrainName.setText(this.affectedTrain.getName());
 				//Aktualisieren Beschreibung
@@ -281,6 +281,26 @@ public class MainController implements ActionListener, MouseListener, ChangeList
 			iconLight = new ImageIcon(imgLight);
 			this.lightBulb.setIcon(iconLight);
 
+		} else if (e.getActionCommand().equals("stopAllTrains")) {
+			this.trainCollection.stopAllTrains();
+			if (this.selectedTrainPanel != null) {
+				this.speedSlider.setValue(this.selectedTrain.getSpeed());
+			}
+
+			// Gehe über jedes Zugpanel in der Zugliste
+			JPanel trainEntry;
+			JLabel speedLabel;
+			for (Component c1 : this.trainsPanel.getComponents()) {
+				// Gehe über jede Komponente innerhalb eines Listeneintrages um das Geschwindigkeitslabel zu manipulieren
+				trainEntry = (JPanel)c1;
+				for (Component c2 : trainEntry.getComponents()) {
+					// Ist das aktuelle Objekt das Geschwindigkeitslabel, so verändere es
+					if(("speedLabel").equals(c2.getName())){
+						speedLabel = (JLabel)c2;
+						speedLabel.setText("Geschwindigkeit: 0%");
+					}
+				}
+			}
 		}
 	}
 
@@ -336,7 +356,7 @@ public class MainController implements ActionListener, MouseListener, ChangeList
 		JButton searchButton = new JButton("Durchsuchen");
 		searchButton.setActionCommand("searchForImage");
 		searchButton.addActionListener(this);
-		
+
 		// Erstelle "Bild löschen"-Button
 		this.deleteImageButton = new JButton("Bild löschen");
 		// Deaktiviere Button und aktiviere ihn erst, wenn ein Bild ausgewählt wurde
@@ -583,11 +603,11 @@ public class MainController implements ActionListener, MouseListener, ChangeList
 		searchButton.addActionListener(this);
 		// Erstelle "Bild löschen"-Button
 		this.deleteImageButton = new JButton("Bild löschen");
-		
+
 		//Aktiviere Button nur, wenn Zug ein Bild besitzt
-		if(train.getImagePath() == null){
+		if (train.getImagePath() == null) {
 			deleteImageButton.setEnabled(false);
-		}else{
+		} else {
 			deleteImageButton.setEnabled(true);
 		}
 		this.deleteImageButton.setActionCommand("deleteImage");

@@ -2,6 +2,7 @@ package prod;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -58,19 +59,22 @@ public class Main {
 	}
 
 	public static void createGUI() {
+		// Setze Windows Look and Feel
 		try {
 			UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
 				| UnsupportedLookAndFeelException e) {
 			e.printStackTrace();
 		}
-		JFrame frame = new JFrame("Lokomotiv Führer 2.0");
+		
+		// Erstelle Hauptframe
+		JFrame frame = new JFrame("Lokomotivführer 2.0");
 
 		// Erstelle MenuBar und füge sie dem Frame hinzu
 		JMenuBar menuBar = new JMenuBar();
 		JMenu menuEntry = new JMenu("Menü");
 
-		// Erstellen des "Speichern"-Eintrags
+		// Erstellen des "Speichern"-Eintrags mit Icon
 		JMenuItem menuSave = new JMenuItem("Speichern");
 		ImageIcon iconSave = new ImageIcon();
 		Image imgSave;
@@ -90,7 +94,8 @@ public class Main {
 		leftPanel.setMaximumSize(new Dimension(350, 500));
 		frame.add(leftPanel, BorderLayout.WEST);
 
-		JPanel trainsPanel = new JPanel();
+		JPanel trainsPanel = new JPanel(new GridBagLayout());
+//		trainsPanel.add(new JLabel("Kein Zug erstellt"));
 		JPanel trainControlPanel = new JPanel(new GridBagLayout());
 		trainControlPanel.add(new JLabel("Kein Zug ausgewählt"));
 		MainController mainController = new MainController(frame, trainsPanel, trainControlPanel, trainCollection);
@@ -100,32 +105,40 @@ public class Main {
 
 		leftPanel.add(scrollPanel);
 
+		//Erstelle addTrainButton
 		JButton addTrainButton = new JButton("Neuer Zug");
+		addTrainButton.setAlignmentX(Component.RIGHT_ALIGNMENT);
 		addTrainButton.setActionCommand("addTrain");
 		addTrainButton.addActionListener(mainController);
+		//Füge Icon zu addTrainButton hinzu
+		ImageIcon iconAdd = new ImageIcon();
+		Image imgAdd;
+		iconAdd = new ImageIcon("images/add.png");
+		imgAdd = iconAdd.getImage();
+		imgAdd = imgAdd.getScaledInstance(10, 10, java.awt.Image.SCALE_SMOOTH);
+		iconAdd = new ImageIcon(imgAdd);
+		addTrainButton.setIcon(iconAdd);
 
 		leftPanel.add(addTrainButton);
 
 		JPanel rightPanel = new JPanel();
 		rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.Y_AXIS));
-		// controllerAreaPanel.setPreferredSize(new Dimension(350, 500));
-		// controllerAreaPanel.setMaximumSize(new Dimension(350, 500));
-//		trainControlPanel.setBorder(BorderFactory.createTitledBorder("trainControlPanel"));
 
 		rightPanel.add(trainControlPanel);
-		// drawControllerArea(rightPanel);
 
 		frame.add(rightPanel);
 
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		 frame.setSize(850, 550);
-//		frame.pack();
+		frame.setSize(850, 550);
+		//		frame.pack();
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 		frame.setLocation(dim.width / 2 - frame.getSize().width / 2, dim.height / 2 - frame.getSize().height / 2);
 
 		JPanel stopAllPanel = new JPanel(new BorderLayout());
 
 		JButton stopAllButton = new JButton("Alle Züge stoppen");
+		stopAllButton.addActionListener(mainController);
+		stopAllButton.setActionCommand("stopAllTrains");
 		stopAllButton.setBackground(Color.RED);
 		stopAllButton.setForeground(Color.RED);
 		ImageIcon iconStop = new ImageIcon();
