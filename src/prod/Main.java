@@ -103,7 +103,10 @@ public class Main {
 		
 		JPanel trainControlPanel = new JPanel(new GridBagLayout());
 		trainControlPanel.add(new JLabel("Kein Zug ausgewählt"));
-		MainController mainController = new MainController(frame, trainsPanel, trainControlPanel, trainCollection);
+		
+		JButton stopAllButton = new JButton("Alle Züge stoppen");
+		
+		MainController mainController = new MainController(frame, trainsPanel, trainControlPanel, trainCollection, stopAllButton);
 		trainsPanel.setLayout(new BoxLayout(trainsPanel, BoxLayout.Y_AXIS));
 
 		JScrollPane scrollPanel = new JScrollPane(trainsPanel);
@@ -141,7 +144,7 @@ public class Main {
 
 		JPanel stopAllPanel = new JPanel(new BorderLayout());
 
-		JButton stopAllButton = new JButton("Alle Züge stoppen");
+		stopAllButton.setEnabled(false);
 		stopAllButton.addActionListener(mainController);
 		stopAllButton.setActionCommand("stopAllTrains");
 		stopAllButton.setBackground(Color.RED);

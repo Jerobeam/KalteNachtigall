@@ -25,6 +25,7 @@ public class MainController implements ActionListener, MouseListener, ChangeList
 	private JFrame mainFrame;
 	private JPanel trainsPanel;
 	private JPanel controllerAreaPanel;
+	private JButton stopAllButton;
 	private TrainCollection trainCollection;
 	private JDialog trainDialog;
 	private JLabel trainImageLabel;
@@ -50,11 +51,12 @@ public class MainController implements ActionListener, MouseListener, ChangeList
 	private JButton deleteImageButton;
 
 	public MainController(JFrame mainFrame, JPanel trainsPanel, JPanel controllerAreaPanel,
-			TrainCollection trainCollection) {
+			TrainCollection trainCollection, JButton stopAllButton) {
 		this.mainFrame = mainFrame;
 		this.trainsPanel = trainsPanel;
 		this.controllerAreaPanel = controllerAreaPanel;
 		this.trainCollection = trainCollection;
+		this.stopAllButton = stopAllButton;
 	}
 
 	@Override
@@ -189,6 +191,9 @@ public class MainController implements ActionListener, MouseListener, ChangeList
 				JLabel noTrainLabel = new JLabel("Noch kein Zug erstellt");
 				noTrainPanel.add(noTrainLabel);
 				this.trainsPanel.add(noTrainPanel);
+				
+				// Deaktiviere stopAllButton
+				stopAllButton.setEnabled(false);
 			}
 			
 		} else if (e.getActionCommand().equals("saveTrain")) {
@@ -432,6 +437,9 @@ public class MainController implements ActionListener, MouseListener, ChangeList
 		if (this.trainCollection.getTrains().isEmpty()) {
 			this.trainsPanel.removeAll();
 			this.trainsPanel.repaint();
+			
+			// Aktiviere stopAllButton
+			stopAllButton.setEnabled(true);
 		}
 
 		JPanel newTrainPanel = new JPanel();

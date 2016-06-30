@@ -68,7 +68,9 @@ public class TrainCollection {
 	
 	public void stopAllTrains(){
 		for (Train t : this.trains) {
-			t.setSpeed(0);
+			if(t.getSpeed() != 0){
+				t.setSpeed(0);
+			}
 		}
 	}
 }
