@@ -21,7 +21,7 @@ public class Train {
 	 * Optionaler Bildpfad des Zuges
 	 */
 	private String imagePath;
-	
+
 	/**
 	 * Geschwindigkeit von 0 bis 100 des Zuges in Prozent
 	 */
@@ -37,9 +37,13 @@ public class Train {
 
 	/**
 	 * Konstruktor
-	 * @param name Zugname
-	 * @param modelDesc Modellbeschreibung des Zuges
-	 * @param imagePath Bildpfad des Zuges
+	 * 
+	 * @param name
+	 *            Zugname
+	 * @param modelDesc
+	 *            Modellbeschreibung des Zuges
+	 * @param imagePath
+	 *            Bildpfad des Zuges
 	 */
 	public Train(String name, String modelDesc, String imagePath) {
 		this.name = name;
@@ -52,6 +56,7 @@ public class Train {
 
 	/**
 	 * Gibt den Zugnamen zurück
+	 * 
 	 * @return Zugname
 	 */
 	public String getName() {
@@ -60,7 +65,9 @@ public class Train {
 
 	/**
 	 * Setzt den Zugnamen und loggt die vorgenommene Änderung
-	 * @param name Zugname
+	 * 
+	 * @param name
+	 *            Zugname
 	 */
 	public void setName(String name) {
 		System.out.println("Name des Zuges '" + this.name + "' geändert zu: '" + name + "'");
@@ -69,6 +76,7 @@ public class Train {
 
 	/**
 	 * Gibt die Modellbeschreibung des Zuges zurück
+	 * 
 	 * @return Modellbeschreibung des Zuges
 	 */
 	public String getModelDesc() {
@@ -77,7 +85,9 @@ public class Train {
 
 	/**
 	 * Setzt die Modellbeschreiung des Zuges und loggt die vorgenommene Änderung
-	 * @param modelDesc Modellbeschreiung des Zuges
+	 * 
+	 * @param modelDesc
+	 *            Modellbeschreiung des Zuges
 	 */
 	public void setModelDesc(String modelDesc) {
 		System.out.println("Beschreibung des Zuges '" + this.name + "' von '" + this.modelDesc + "' zu '" + modelDesc
@@ -87,6 +97,7 @@ public class Train {
 
 	/**
 	 * Gibt den Bildpfad des Zuges zurück
+	 * 
 	 * @return Bildpfad des Zuges
 	 */
 	public String getImagePath() {
@@ -95,7 +106,9 @@ public class Train {
 
 	/**
 	 * Setzt den Bildpfad des Zuges
-	 * @param imagePath Bildpfad des Zuges
+	 * 
+	 * @param imagePath
+	 *            Bildpfad des Zuges
 	 */
 	public void setImagePath(String imagePath) {
 		this.imagePath = imagePath;
@@ -103,6 +116,7 @@ public class Train {
 
 	/**
 	 * Gibt die aktuelle Geschwindigkeit des Zuges zurück
+	 * 
 	 * @return Geschwindigkeit des Zuges
 	 */
 	public int getSpeed() {
@@ -110,8 +124,11 @@ public class Train {
 	}
 
 	/**
-	 * Setzt die Geschwindigkeit des Zuges und loggt die vorgenommene Änderung in 10er Schritten
-	 * @param speed Geschwindigkeit des Zuges
+	 * Setzt die Geschwindigkeit des Zuges und loggt die vorgenommene Änderung
+	 * in 10er Schritten
+	 * 
+	 * @param speed
+	 *            Geschwindigkeit des Zuges
 	 */
 	public void setSpeed(int speed) {
 		// Erlaube nur Werte von 0 bis 100
@@ -132,6 +149,7 @@ public class Train {
 
 	/**
 	 * Gibt das Lichtflag des Zuges zurück
+	 * 
 	 * @return Flag Licht an
 	 */
 	public boolean isLightActive() {
@@ -140,7 +158,9 @@ public class Train {
 
 	/**
 	 * Setzt das Lichtflag des Zuges und loggt die vorgenommene Änderung
-	 * @param lightActive Flag Licht an
+	 * 
+	 * @param lightActive
+	 *            Flag Licht an
 	 */
 	public void setLightActive(boolean lightActive) {
 		this.lightActive = lightActive;
@@ -153,6 +173,7 @@ public class Train {
 
 	/**
 	 * Gibt das Richtungsflag des Zuges zurück
+	 * 
 	 * @return Flag Richtung rechts
 	 */
 	public boolean isDirectionRight() {
@@ -161,7 +182,9 @@ public class Train {
 
 	/**
 	 * Setzt das Richtungsflag des Zuges und loggt die vorgenommene Änderung
-	 * @param directionRight Flag Richtung rechts
+	 * 
+	 * @param directionRight
+	 *            Flag Richtung rechts
 	 */
 	public void setDirectionRight(boolean directionRight) {
 		this.directionRight = directionRight;

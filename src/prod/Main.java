@@ -133,18 +133,18 @@ public class Main {
 		addTrainButton.setIcon(iconAdd);
 		// Setze addTrainButton in den linken Teilbereich der Anwendung
 		leftPanel.add(addTrainButton);
-		
+
 		// Panel für rechten Bereich der Anwendung erstellen
 		JPanel rightPanel = new JPanel();
 		rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.Y_AXIS));
-		
+
 		// Erstelle Panel für Controller-Bereich der Anwendung
 		JPanel trainControlPanel = new JPanel(new GridBagLayout());
 		// Füge initial ein Platzhalterlabel hinzu
 		trainControlPanel.add(new JLabel("Kein Zug ausgewählt"));
 		// Controller-Bereich rechts Einfügen
 		rightPanel.add(trainControlPanel);
-		
+
 		// Erstelle Button zum Stoppen aller Züge
 		JButton stopAllButton = new JButton("Alle Züge stoppen");
 
@@ -153,8 +153,9 @@ public class Main {
 		frame.setSize(850, 550);
 		// Zentriere frame auf dem Bildschirm
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-		frame.setLocation(dim.width / 2 - frame.getSize().width / 2, dim.height / 2 - frame.getSize().height / 2);frame.setVisible(true);
-		
+		frame.setLocation(dim.width / 2 - frame.getSize().width / 2, dim.height / 2 - frame.getSize().height / 2);
+		frame.setVisible(true);
+
 		// Erstelle Panel als Container des stoppAllButton
 		JPanel stopAllPanel = new JPanel(new BorderLayout());
 		// Deaktiviere den stopAllButton initial
@@ -174,7 +175,7 @@ public class Main {
 		stopAllPanel.setMaximumSize(new Dimension(frame.getWidth(), 30));
 		stopAllPanel.add(stopAllButton, BorderLayout.CENTER);
 		rightPanel.add(stopAllPanel);
-		
+
 		// Initialisiere Controller
 		controller = new Controller(frame, trainsPanel, trainControlPanel, trainCollection, stopAllButton);
 		// Menueintrag "Speichern" Eintrag beim Controller anmelden
