@@ -23,12 +23,14 @@ public class Train {
 		return name;
 	}
 	public void setName(String name) {
+		System.out.println("Name des Zuges '" + this.name + "' geändert zu: '" + name + "'");
 		this.name = name;
 	}
 	public String getModelDesc() {
 		return modelDesc;
 	}
 	public void setModelDesc(String modelDesc) {
+		System.out.println("Beschreibung des Zuges '" + this.name + "' von '" + this.modelDesc + "' zu '" + modelDesc + "' geändert");
 		this.modelDesc = modelDesc;
 	}
 	public String getImagePath() {
@@ -49,17 +51,33 @@ public class Train {
 		}else{
 			this.speed = speed;
 		}
+		
+		//Gebe Geschwindigkeitsveränderungen nur in 10er Schritten aus
+		if(this.speed%10 == 0){
+			System.out.println("Geschwindigkeit des Zuges '" + this.name + "' auf " + this.speed + " geändert");
+		}
+		
 	}
 	public boolean isLightActive() {
 		return lightActive;
 	}
 	public void setLightActive(boolean lightActive) {
 		this.lightActive = lightActive;
+		if(lightActive){
+			System.out.println("Licht des Zuges '" + this.name + "' angeschaltet");
+		}else{
+			System.out.println("Licht des Zuges '" + this.name + "' ausgeschaltet");
+		}
 	}
 	public boolean isDirectionRight() {
 		return directionRight;
 	}
 	public void setDirectionRight(boolean directionRight) {
 		this.directionRight = directionRight;
+		if(directionRight){
+			System.out.println("Zug '" + this.name + "' fährt nun rechts herum");
+		}else{
+			System.out.println("Zug '" + this.name + "' fährt nun links herum");
+		}
 	}
 }

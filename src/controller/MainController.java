@@ -13,12 +13,14 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import prod.Train;
 import prod.TrainCollection;
 
-public class MainController implements ActionListener, MouseListener {
+public class MainController implements ActionListener, MouseListener, ChangeListener {
 
 	private JFrame mainFrame;
 	private JPanel trainsPanel;
@@ -36,8 +38,19 @@ public class MainController implements ActionListener, MouseListener {
 	private JLabel selectedSpeedLabel;
 	private JLabel selectedDirectionsLabel;
 	private JLabel selectedLightLabel;
+	private ButtonGroup directionButtonGroup;
+	private JToggleButton toggleLeft;
+	private JToggleButton toggleRight;
+	private JButton switchLightButton;
+	private JLabel lightBulb;
+	private JSlider speedSlider;
+	private JLabel controllerImageLabel;
+	private JLabel controllerTrainName;
+	private JLabel controllerTrainModelDesc;
+	private JButton deleteImageButton;
 
-	public MainController(JFrame mainFrame, JPanel trainsPanel, JPanel controllerAreaPanel, TrainCollection trainCollection) {
+	public MainController(JFrame mainFrame, JPanel trainsPanel, JPanel controllerAreaPanel,
+			TrainCollection trainCollection) {
 		this.mainFrame = mainFrame;
 		this.trainsPanel = trainsPanel;
 		this.controllerAreaPanel = controllerAreaPanel;
@@ -73,6 +86,7 @@ public class MainController implements ActionListener, MouseListener {
 				icon = new ImageIcon(img);
 				trainImageLabel.setText("");
 				trainImageLabel.setIcon(icon);
+				deleteImageButton.setEnabled(true);
 				// trainDialog.pack();
 				trainDialog.setSize(400, 380);
 			}
@@ -81,6 +95,7 @@ public class MainController implements ActionListener, MouseListener {
 			this.imagePath = null;
 			trainImageLabel.setIcon(null);
 			trainImageLabel.setText("Kein Bild gesetzt");
+			deleteImageButton.setEnabled(false);
 			trainDialog.setSize(400, 250);
 
 		} else if (e.getActionCommand().equals("cancelDialog")) {
@@ -129,7 +144,7 @@ public class MainController implements ActionListener, MouseListener {
 			// Hole Zugobjekt
 			this.affectedTrain = this.trainCollection.getTrainByName(trainName);
 
-			this.openEditDialog(affectedTrain);
+			this.openEditDialog(this.affectedTrain);
 
 		} else if (e.getActionCommand().equals("deleteTrain")) {
 			// Hole Button des getriggerten Events
@@ -149,12 +164,22 @@ public class MainController implements ActionListener, MouseListener {
 					JOptionPane.YES_NO_OPTION);
 
 			if (confirmResult == JOptionPane.YES_OPTION) {
+				// Setze Controller Bereich zurück, falls der gelöschte Zug der zuletzt ausgewählt war
+				if (this.affectedTrain == this.selectedTrain) {
+					controllerAreaPanel.removeAll();
+					controllerAreaPanel.repaint();
+					controllerAreaPanel.setLayout(new GridBagLayout());
+					controllerAreaPanel.add(new JLabel("Kein Zug ausgewählt"));
+					controllerAreaPanel.revalidate();
+				}
+
 				// Entferne Zugobjekt von trainCollection
-				this.trainCollection.removeTrainFromCollection(affectedTrain);
+				this.trainCollection.removeTrainFromCollection(this.affectedTrain);
 				// Entferne Panel und refreshe trainsPanel
 				this.trainsPanel.remove(this.affectedPanel);
 				this.trainsPanel.revalidate();
 				this.trainsPanel.repaint();
+
 			} else {
 				return;
 			}
@@ -171,20 +196,91 @@ public class MainController implements ActionListener, MouseListener {
 			}
 			// Werfe Fehler, wenn Zugname bereits von einem anderen Zug belegt
 			// ist
-			if (trainCollection.trainIsAlreadyExisting(trainName) && !(affectedTrain.getName().equals(trainName))) {
+			if (trainCollection.trainIsAlreadyExisting(trainName)
+					&& !(this.affectedTrain.getName().equals(trainName))) {
 				JOptionPane.showMessageDialog(trainDialog, "Zug existiert bereits, bitte gebe einen anderen Namen ein",
 						"Zug existiert bereits", JOptionPane.WARNING_MESSAGE);
 				return;
 			}
 			// Wenn beide Fälle nicht eintreten, update den Zug
-			affectedTrain.setName(trainName);
-			affectedTrain.setModelDesc(trainModelDesc);
-			affectedTrain.setImagePath(imagePath);
+			this.affectedTrain.setName(trainName);
+			this.affectedTrain.setModelDesc(trainModelDesc);
+			this.affectedTrain.setImagePath(imagePath);
+
+			// Falls der editierte Zug gleichzeitig auch der zuletzt ausgewählte Zug ist, aktualisiere auch den Controller-Bereiech
+			if (this.affectedTrain == this.selectedTrain) {
+				// Aktualisiere Bild
+				ImageIcon icon = new ImageIcon();
+				Image img;
+				if (this.affectedTrain.getImagePath() != null) {
+					icon = new ImageIcon(this.affectedTrain.getImagePath());
+				} else {
+					icon = new ImageIcon("images/default_train.png");
+				}
+				img = icon.getImage();
+				img = img.getScaledInstance(150, 150, java.awt.Image.SCALE_SMOOTH);
+				icon = new ImageIcon(img);
+				controllerImageLabel.setIcon(icon);
+				
+				//Aktualisieren Namen
+				this.controllerTrainName.setText(this.affectedTrain.getName());
+				//Aktualisieren Beschreibung
+				this.controllerTrainModelDesc.setText(this.affectedTrain.getModelDesc());
+			}
+
 			trainDialog.dispose();
 
 			// Nach schließen des Dialoges muss der neue Zug auch im UI
 			// aktualisiert werden
-			this.redrawTrainPanel(affectedTrain, affectedPanel);
+			this.redrawTrainPanel(this.affectedTrain, affectedPanel);
+
+		} else if (e.getActionCommand().equals("stopTrain")) {
+			if (this.selectedTrain.getSpeed() != 0) {
+				this.selectedTrain.setSpeed(0);
+				this.selectedSpeedLabel.setText("Geschwindigkeit: " + this.selectedTrain.getSpeed() + "%");
+				this.speedSlider.setValue(0);
+			}
+
+		} else if (e.getActionCommand().equals("toggleLeft")) {
+			if (this.selectedTrain.isDirectionRight()) {
+				this.selectedTrain.setDirectionRight(false);
+				this.selectedDirectionsLabel.setText("Fahrtrichtung: Links");
+			}
+
+		} else if (e.getActionCommand().equals("toggleRight")) {
+			if (!this.selectedTrain.isDirectionRight()) {
+				this.selectedTrain.setDirectionRight(true);
+				this.selectedDirectionsLabel.setText("Fahrtrichtung: Rechts");
+			}
+
+		} else if (e.getActionCommand().equals("switchLight")) {
+			this.selectedTrain.setLightActive(!this.selectedTrain.isLightActive());
+
+			ImageIcon iconSwitch = new ImageIcon();
+			ImageIcon iconLight = new ImageIcon();
+			Image imgSwitch;
+
+			if (this.selectedTrain.isLightActive()) {
+				iconSwitch = new ImageIcon("images/switch_right_green.png");
+				iconLight = new ImageIcon("images/lightbulb_on.png");
+				this.selectedLightLabel.setText("Licht: An");
+			} else {
+				iconSwitch = new ImageIcon("images/switch_left.png");
+				iconLight = new ImageIcon("images/lightbulb_off.png");
+				this.selectedLightLabel.setText("Licht: Aus");
+			}
+
+			imgSwitch = iconSwitch.getImage();
+			imgSwitch = imgSwitch.getScaledInstance(35, 35, java.awt.Image.SCALE_SMOOTH);
+			iconSwitch = new ImageIcon(imgSwitch);
+			this.switchLightButton.setIcon(iconSwitch);
+
+			Image imgLight;
+			imgLight = iconLight.getImage();
+			imgLight = imgLight.getScaledInstance(50, 50, java.awt.Image.SCALE_SMOOTH);
+			iconLight = new ImageIcon(imgLight);
+			this.lightBulb.setIcon(iconLight);
+
 		}
 	}
 
@@ -240,13 +336,16 @@ public class MainController implements ActionListener, MouseListener {
 		JButton searchButton = new JButton("Durchsuchen");
 		searchButton.setActionCommand("searchForImage");
 		searchButton.addActionListener(this);
+		
 		// Erstelle "Bild löschen"-Button
-		JButton deleteImageButton = new JButton("Bild löschen");
-		deleteImageButton.setActionCommand("deleteImage");
-		deleteImageButton.addActionListener(this);
+		this.deleteImageButton = new JButton("Bild löschen");
+		// Deaktiviere Button und aktiviere ihn erst, wenn ein Bild ausgewählt wurde
+		deleteImageButton.setEnabled(false);
+		this.deleteImageButton.setActionCommand("deleteImage");
+		this.deleteImageButton.addActionListener(this);
 		// Füge Buttons dem Panel hinzu
 		imageButtonsPanel.add(searchButton);
-		imageButtonsPanel.add(deleteImageButton);
+		imageButtonsPanel.add(this.deleteImageButton);
 		// Füge Panel dem Dialog hinzu
 		trainDialog.add(imageButtonsPanel, c);
 
@@ -346,30 +445,30 @@ public class MainController implements ActionListener, MouseListener {
 		} else {
 			directionLabel.setText("Fahrtrichtung: Links");
 		}
-		
+
 		c.gridx = 2;
 		c.gridy = 1;
 		newTrainPanel.add(directionLabel, c);
 
 		// Füge Zugbild hinzu
-		JLabel trainImageLabel = new JLabel();
+		JLabel trainListImageLabel = new JLabel();
 		ImageIcon icon = new ImageIcon();
 		Image img;
-		if(train.getImagePath() != null){
+		if (train.getImagePath() != null) {
 			icon = new ImageIcon(train.getImagePath());
-		}else{
+		} else {
 			icon = new ImageIcon("images/default_train.png");
 		}
 		img = icon.getImage();
 		img = img.getScaledInstance(70, 70, java.awt.Image.SCALE_SMOOTH);
 		icon = new ImageIcon(img);
-		trainImageLabel.setIcon(icon);
+		trainListImageLabel.setIcon(icon);
 		c.gridx = 0;
 		c.gridy = 0;
 		c.gridheight = 2;
 		c.anchor = GridBagConstraints.CENTER;
 		c.fill = GridBagConstraints.VERTICAL;
-		newTrainPanel.add(trainImageLabel, c);
+		newTrainPanel.add(trainListImageLabel, c);
 
 		// Erstellen des "Edit"-Buttons
 		JButton editTrainButton = new JButton();
@@ -483,12 +582,19 @@ public class MainController implements ActionListener, MouseListener {
 		searchButton.setActionCommand("searchForImage");
 		searchButton.addActionListener(this);
 		// Erstelle "Bild löschen"-Button
-		JButton deleteImageButton = new JButton("Bild löschen");
-		deleteImageButton.setActionCommand("deleteImage");
-		deleteImageButton.addActionListener(this);
+		this.deleteImageButton = new JButton("Bild löschen");
+		
+		//Aktiviere Button nur, wenn Zug ein Bild besitzt
+		if(train.getImagePath() == null){
+			deleteImageButton.setEnabled(false);
+		}else{
+			deleteImageButton.setEnabled(true);
+		}
+		this.deleteImageButton.setActionCommand("deleteImage");
+		this.deleteImageButton.addActionListener(this);
 		// Füge Buttons dem Panel hinzu
 		imageButtonsPanel.add(searchButton);
-		imageButtonsPanel.add(deleteImageButton);
+		imageButtonsPanel.add(this.deleteImageButton);
 		// Füge Panel dem Dialog hinzu
 		trainDialog.add(imageButtonsPanel, c);
 
@@ -566,7 +672,6 @@ public class MainController implements ActionListener, MouseListener {
 		panel.setBackground(trainsPanel.getBackground());
 		panel.removeAll();
 		panel.setName(train.getName());
-		// newTrainPanel.setBorder(BorderFactory.createTitledBorder(" "));
 		panel.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
 		panel.setPreferredSize(new Dimension(315, 100));
 		panel.setMaximumSize(new Dimension(315, 100));
@@ -614,24 +719,24 @@ public class MainController implements ActionListener, MouseListener {
 		panel.add(directionLabel, c);
 
 		// Füge Zugbild hinzu
-		JLabel trainImageLabel = new JLabel();
+		JLabel trainListImageLabel = new JLabel();
 		ImageIcon icon = new ImageIcon();
 		Image img;
-		if(train.getImagePath() != null){
+		if (train.getImagePath() != null) {
 			icon = new ImageIcon(train.getImagePath());
-		}else{
+		} else {
 			icon = new ImageIcon("images/default_train.png");
 		}
 		img = icon.getImage();
 		img = img.getScaledInstance(70, 70, java.awt.Image.SCALE_SMOOTH);
 		icon = new ImageIcon(img);
-		trainImageLabel.setIcon(icon);
+		trainListImageLabel.setIcon(icon);
 		c.gridx = 0;
 		c.gridy = 0;
 		c.gridheight = 2;
 		c.anchor = GridBagConstraints.CENTER;
 		c.fill = GridBagConstraints.VERTICAL;
-		panel.add(trainImageLabel, c);
+		panel.add(trainListImageLabel, c);
 
 		// Erstellen des "Edit"-Buttons
 		JButton editTrainButton = new JButton();
@@ -671,7 +776,7 @@ public class MainController implements ActionListener, MouseListener {
 		c.gridwidth = 1;
 
 		panel.add(trainActionPanel, c);
-		
+
 		JLabel lightLabel = new JLabel();
 		lightLabel.setName("lightLabel");
 		if (train.isLightActive()) {
@@ -732,33 +837,55 @@ public class MainController implements ActionListener, MouseListener {
 	public void mouseReleased(MouseEvent e) {
 		if (e.getSource() instanceof JPanel) {
 			JPanel activePanel = (JPanel) (e.getSource());
-			if (selectedTrainPanel == null) {
+			if (this.selectedTrainPanel == null) {
 				this.selectedTrainPanel = activePanel;
 				activePanel.setBackground(new Color(210, 210, 210));
-			} else {
-				selectedTrainPanel.setBackground(trainsPanel.getBackground());
-				this.selectedTrainPanel = activePanel;
-				activePanel.setBackground(new Color(210, 210, 210));
-			}
-			// Hole den ausgewählten Zug über den Panel Namen
-			this.selectedTrain = this.trainCollection.getTrainByName(activePanel.getName());
 
-			// Hole sich alle relevanten Labels aus dem ausgewählten Panel, um ihre Werte später manipulieren zu können
-			for (Component component : activePanel.getComponents()) {
-				if(("speedLabel").equals(component.getName())){
-					this.selectedSpeedLabel = (JLabel)component;
+				// Hole den ausgewählten Zug über den Panel Namen
+				this.selectedTrain = this.trainCollection.getTrainByName(activePanel.getName());
+
+				// Hole sich alle relevanten Labels aus dem ausgewählten Panel, um
+				// ihre Werte später manipulieren zu können
+				for (Component component : activePanel.getComponents()) {
+					if (("speedLabel").equals(component.getName())) {
+						this.selectedSpeedLabel = (JLabel) component;
+					}
+					if (("directionLabel").equals(component.getName())) {
+						this.selectedDirectionsLabel = (JLabel) component;
+					}
+					if (("lightLabel").equals(component.getName())) {
+						this.selectedLightLabel = (JLabel) component;
+					}
 				}
-				if(("directionLabel").equals(component.getName())){
-					this.selectedDirectionsLabel = (JLabel)component;
+				this.drawControllerArea();
+
+			} else if (this.selectedTrainPanel != activePanel) {
+				this.selectedTrainPanel.setBackground(trainsPanel.getBackground());
+				this.selectedTrainPanel = activePanel;
+				activePanel.setBackground(new Color(210, 210, 210));
+
+				// Hole den ausgewählten Zug über den Panel Namen
+				this.selectedTrain = this.trainCollection.getTrainByName(activePanel.getName());
+
+				// Hole sich alle relevanten Labels aus dem ausgewählten Panel, um
+				// ihre Werte später manipulieren zu können
+				for (Component component : activePanel.getComponents()) {
+					if (("speedLabel").equals(component.getName())) {
+						this.selectedSpeedLabel = (JLabel) component;
+					}
+					if (("directionLabel").equals(component.getName())) {
+						this.selectedDirectionsLabel = (JLabel) component;
+					}
+					if (("lightLabel").equals(component.getName())) {
+						this.selectedLightLabel = (JLabel) component;
+					}
 				}
-				if(("lightLabel").equals(component.getName())){
-					this.selectedLightLabel = (JLabel)component;
-				}
+				this.drawControllerArea();
 			}
-			this.drawControllerArea();
+
 		}
 	}
-	
+
 	public void drawControllerArea() {
 		this.controllerAreaPanel.removeAll();
 		JPanel trainControlPanel = new JPanel();
@@ -773,48 +900,50 @@ public class MainController implements ActionListener, MouseListener {
 		c.weighty = 1.0;
 
 		// Füge Zugbild hinzu
-		JLabel trainImageLabel = new JLabel();
+		this.controllerImageLabel = new JLabel();
 		ImageIcon icon = new ImageIcon();
 		Image img;
-		icon = new ImageIcon("D:/Bilder/Saved Pictures/Beautiful/Background/stock-photo-154870507.jpg");
+
+		if (this.selectedTrain.getImagePath() != null) {
+			icon = new ImageIcon(this.selectedTrain.getImagePath());
+		} else {
+			icon = new ImageIcon("images/default_train.png");
+		}
+
 		img = icon.getImage();
 		img = img.getScaledInstance(150, 150, java.awt.Image.SCALE_SMOOTH);
 		icon = new ImageIcon(img);
-		trainImageLabel.setIcon(icon);
+		controllerImageLabel.setIcon(icon);
 
-		// JPanel panel1 = new JPanel();
-		// panel1.setBorder(BorderFactory.createTitledBorder("Panel1"));
 		c.gridx = 0;
 		c.gridy = 0;
 		c.gridwidth = 1;
 		c.gridheight = 2;
 		c.anchor = GridBagConstraints.PAGE_START;
 		c.fill = GridBagConstraints.VERTICAL;
-		trainControlPanel.add(trainImageLabel, c);
+		trainControlPanel.add(controllerImageLabel, c);
 
-		JLabel trainName = new JLabel("Random Train Name Focker");
-		Font myFont = new Font(trainName.getFont().getFontName(), Font.BOLD, 16);
-		trainName.setFont(myFont);
+		this.controllerTrainName = new JLabel(this.selectedTrain.getName());
+		Font myFont = new Font(this.controllerTrainName.getFont().getFontName(), Font.BOLD, 16);
+		this.controllerTrainName.setFont(myFont);
 
-		// JPanel panel2 = new JPanel();
-		// panel2.setBorder(BorderFactory.createTitledBorder("Panel2"));
 		c.gridx = 1;
 		c.gridy = 0;
 		c.gridwidth = 2;
 		c.gridheight = 1;
 		c.anchor = GridBagConstraints.CENTER;
 		c.fill = GridBagConstraints.HORIZONTAL;
-		trainControlPanel.add(trainName, c);
+		trainControlPanel.add(this.controllerTrainName, c);
 
-		JLabel trainModelDesc = new JLabel("Dampflok Mampflol");
-		myFont = new Font(trainModelDesc.getFont().getFontName(), Font.PLAIN, 14);
-		trainModelDesc.setFont(myFont);
+		this.controllerTrainModelDesc = new JLabel(this.selectedTrain.getModelDesc());
+		myFont = new Font(this.controllerTrainModelDesc.getFont().getFontName(), Font.PLAIN, 14);
+		this.controllerTrainModelDesc.setFont(myFont);
 		c.gridx = 1;
 		c.gridy = 1;
 		c.gridwidth = 2;
 		c.gridheight = 1;
 		c.anchor = GridBagConstraints.PAGE_START;
-		trainControlPanel.add(trainModelDesc, c);
+		trainControlPanel.add(this.controllerTrainModelDesc, c);
 
 		JLabel speedLabel = new JLabel("Geschwindigkeit:");
 		c.gridx = 0;
@@ -825,15 +954,19 @@ public class MainController implements ActionListener, MouseListener {
 
 		JPanel speedPanel = new JPanel();
 
-		JSlider speedSlider = new JSlider();
-		speedSlider.setMajorTickSpacing(100);
-		speedSlider.setMinorTickSpacing(1);
-		speedSlider.setPaintTicks(true);
-		speedSlider.setPaintLabels(true);
-		speedSlider.setValue(0);
-		speedPanel.add(speedSlider);
+		this.speedSlider = new JSlider();
+		this.speedSlider.setName("speedSlider");
+		this.speedSlider.addChangeListener(this);
+		this.speedSlider.setMajorTickSpacing(100);
+		this.speedSlider.setMinorTickSpacing(1);
+		this.speedSlider.setPaintTicks(true);
+		this.speedSlider.setPaintLabels(true);
+		this.speedSlider.setValue(this.selectedTrain.getSpeed());
+		speedPanel.add(this.speedSlider);
 
 		JButton stopTrainButton = new JButton("Stop");
+		stopTrainButton.addActionListener(this);
+		stopTrainButton.setActionCommand("stopTrain");
 		stopTrainButton.setBackground(Color.RED);
 		stopTrainButton.setForeground(Color.RED);
 		ImageIcon iconStop = new ImageIcon();
@@ -860,37 +993,45 @@ public class MainController implements ActionListener, MouseListener {
 		trainControlPanel.add(directionLabel, c);
 
 		JPanel directionPanel = new JPanel(new FlowLayout());
-		
-		ButtonGroup directionButtonGroup = new ButtonGroup();
-		
-		JToggleButton toggleLeft = new JToggleButton("Links");
-		toggleLeft.setPreferredSize(new Dimension(85, 25));
+
+		this.directionButtonGroup = new ButtonGroup();
+
+		this.toggleLeft = new JToggleButton("Links");
+		this.toggleLeft.addActionListener(this);
+		this.toggleLeft.setActionCommand("toggleLeft");
+		this.toggleLeft.setPreferredSize(new Dimension(85, 25));
 		ImageIcon iconTurnLeft = new ImageIcon();
 		Image imgTurnLeft;
 		iconTurnLeft = new ImageIcon("images/turn_left.png");
 		imgTurnLeft = iconTurnLeft.getImage();
 		imgTurnLeft = imgTurnLeft.getScaledInstance(15, 15, java.awt.Image.SCALE_SMOOTH);
 		iconTurnLeft = new ImageIcon(imgTurnLeft);
-		toggleLeft.setIcon(iconTurnLeft);
-		
-		JToggleButton toggleRight = new JToggleButton("Rechts");
-		toggleRight.setPreferredSize(new Dimension(85, 25));
+		this.toggleLeft.setIcon(iconTurnLeft);
+
+		this.toggleRight = new JToggleButton("Rechts");
+		this.toggleRight.addActionListener(this);
+		this.toggleRight.setActionCommand("toggleRight");
+		this.toggleRight.setPreferredSize(new Dimension(85, 25));
 		ImageIcon iconTurnRight = new ImageIcon();
 		Image imgTurnRight;
 		iconTurnRight = new ImageIcon("images/turn_right.png");
 		imgTurnRight = iconTurnRight.getImage();
 		imgTurnRight = imgTurnRight.getScaledInstance(15, 15, java.awt.Image.SCALE_SMOOTH);
 		iconTurnRight = new ImageIcon(imgTurnRight);
-		toggleRight.setIcon(iconTurnRight);
-		
-		directionButtonGroup.add(toggleLeft);
-		directionButtonGroup.add(toggleRight);
-	
-		directionButtonGroup.setSelected(toggleLeft.getModel(), true);
-	
-		directionPanel.add(toggleLeft);
-		directionPanel.add(toggleRight);
-		
+		this.toggleRight.setIcon(iconTurnRight);
+
+		this.directionButtonGroup.add(this.toggleLeft);
+		this.directionButtonGroup.add(this.toggleRight);
+
+		if (this.selectedTrain.isDirectionRight()) {
+			this.directionButtonGroup.setSelected(this.toggleRight.getModel(), true);
+		} else {
+			this.directionButtonGroup.setSelected(this.toggleLeft.getModel(), true);
+		}
+
+		directionPanel.add(this.toggleLeft);
+		directionPanel.add(this.toggleRight);
+
 		c.gridx = 2;
 		c.gridy = 3;
 		c.gridwidth = 1;
@@ -903,33 +1044,42 @@ public class MainController implements ActionListener, MouseListener {
 		trainControlPanel.add(lightLabel, c);
 
 		JPanel lightPanel = new JPanel();
-		
-		JButton switchLightButton = new JButton();
-		switchLightButton.setBorder(BorderFactory.createEmptyBorder());
-		switchLightButton.setContentAreaFilled(false);
+
+		this.switchLightButton = new JButton();
+		this.switchLightButton.addActionListener(this);
+		this.switchLightButton.setActionCommand("switchLight");
+		this.switchLightButton.setBorder(BorderFactory.createEmptyBorder());
+		this.switchLightButton.setContentAreaFilled(false);
 		ImageIcon iconSwitch = new ImageIcon();
+		ImageIcon iconLight = new ImageIcon();
 		Image imgSwitch;
-		iconSwitch = new ImageIcon("images/switch_right_green.png");
+
+		if (this.selectedTrain.isLightActive()) {
+			iconSwitch = new ImageIcon("images/switch_right_green.png");
+			iconLight = new ImageIcon("images/lightbulb_on.png");
+		} else {
+			iconSwitch = new ImageIcon("images/switch_left.png");
+			iconLight = new ImageIcon("images/lightbulb_off.png");
+		}
+
 		imgSwitch = iconSwitch.getImage();
 		imgSwitch = imgSwitch.getScaledInstance(35, 35, java.awt.Image.SCALE_SMOOTH);
 		iconSwitch = new ImageIcon(imgSwitch);
-		switchLightButton.setIcon(iconSwitch);
-		
-		JLabel lightBulb = new JLabel();
-		ImageIcon iconLight = new ImageIcon();
+		this.switchLightButton.setIcon(iconSwitch);
+
+		this.lightBulb = new JLabel();
 		Image imgLight;
-		iconLight = new ImageIcon("images/lightbulb_on.png");
 		imgLight = iconLight.getImage();
 		imgLight = imgLight.getScaledInstance(50, 50, java.awt.Image.SCALE_SMOOTH);
 		iconLight = new ImageIcon(imgLight);
-		lightBulb.setIcon(iconLight);
-		
-		lightPanel.add(switchLightButton);
-		lightPanel.add(lightBulb);
+		this.lightBulb.setIcon(iconLight);
+
+		lightPanel.add(this.switchLightButton);
+		lightPanel.add(this.lightBulb);
 
 		JPanel flowPanel = new JPanel(new FlowLayout());
 		flowPanel.add(lightPanel);
-		
+
 		c.gridx = 2;
 		c.gridy = 4;
 		c.gridwidth = 1;
@@ -940,4 +1090,15 @@ public class MainController implements ActionListener, MouseListener {
 		this.controllerAreaPanel.revalidate();
 	}
 
+	@Override
+	public void stateChanged(ChangeEvent e) {
+		JSlider activeSlider = (JSlider) e.getSource();
+
+		// Überprüfe, welcher Slider das Ereignis ausgelöst hat
+		if (("speedSlider".equals(activeSlider.getName()))) {
+			int speed = activeSlider.getValue();
+			this.selectedTrain.setSpeed(speed);
+			this.selectedSpeedLabel.setText("Geschwindigkeit: " + this.selectedTrain.getSpeed() + "%");
+		}
+	}
 }

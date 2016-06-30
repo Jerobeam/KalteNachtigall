@@ -51,6 +51,10 @@ public class TrainCollection {
 		if(train != null){
 			this.trains.remove(train);
 		}
+		System.out.println("Zug '" + train.getName()+ "' gelöscht");
+		
+		// Gebe Speicherplatz des Objektes durch Garbage Collector frei
+		train = null;
 	}
 	
 	// Methode zum Debuggen
@@ -59,6 +63,12 @@ public class TrainCollection {
 		for (Train train : this.trains) {
 			System.out.println("Zug Nr. " + i + ": " + train.getName());
 			i++;
+		}
+	}
+	
+	public void stopAllTrains(){
+		for (Train t : this.trains) {
+			t.setSpeed(0);
 		}
 	}
 }
