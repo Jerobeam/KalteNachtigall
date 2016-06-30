@@ -36,7 +36,7 @@ public class Train {
 	private boolean directionRight;
 
 	/**
-	 * Konstruktor der Klasse Train
+	 * Konstruktor
 	 * @param name Zugname
 	 * @param modelDesc Modellbeschreibung des Zuges
 	 * @param imagePath Bildpfad des Zuges
