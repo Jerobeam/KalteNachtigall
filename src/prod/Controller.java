@@ -290,7 +290,7 @@ public class Controller implements ActionListener, MouseListener, ChangeListener
 			Image imgSwitch;
 
 			if (this.selectedTrain.isLightActive()) {
-				iconSwitch = new ImageIcon("images/switch_right_green.png");
+				iconSwitch = new ImageIcon("images/switch_right.png");
 				iconLight = new ImageIcon("images/lightbulb_on.png");
 				this.selectedLightLabel.setText("Licht: An");
 			} else {
@@ -1122,7 +1122,7 @@ public class Controller implements ActionListener, MouseListener, ChangeListener
 		Image imgSwitch;
 
 		if (this.selectedTrain.isLightActive()) {
-			iconSwitch = new ImageIcon("images/switch_right_green.png");
+			iconSwitch = new ImageIcon("images/switch_right.png");
 			iconLight = new ImageIcon("images/lightbulb_on.png");
 		} else {
 			iconSwitch = new ImageIcon("images/switch_left.png");

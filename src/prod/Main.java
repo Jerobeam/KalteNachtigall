@@ -1,58 +1,35 @@
 package prod;
 
-import static java.awt.event.InputEvent.CTRL_DOWN_MASK;
+import java.awt.*;
+import javax.swing.*;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Image;
-import java.awt.Insets;
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.ButtonGroup;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSlider;
-import javax.swing.JTextField;
-import javax.swing.JToggleButton;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
-
-import com.sun.glass.events.WindowEvent;
-import com.sun.javafx.event.DirectEvent;
-
+/**
+ * Klasse zum Starten der Anwendung
+ * 
+ * @author Sebastian Röhling
+ *
+ * @version 1.0
+ */
 public class Main {
 
+	/**
+	 * Zugliste
+	 */
 	private static TrainCollection trainCollection = new TrainCollection();
 
+	/**
+	 * Controller
+	 */
+	private static Controller controller;
+
+	/**
+	 * Main Methode zum Start der Anwendung
+	 * 
+	 * @param args
+	 */
 	public static void main(String[] args) {
 
+		// Übergebe das Aufbauen der GUI an den Event-Dispatcher Thread
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				createGUI();
@@ -60,6 +37,9 @@ public class Main {
 		});
 	}
 
+	/**
+	 * Baut initiales GUI auf
+	 */
 	public static void createGUI() {
 		// Setze Windows Look and Feel
 		try {
@@ -72,12 +52,13 @@ public class Main {
 		// Erstelle Hauptframe
 		JFrame frame = new JFrame("Lokomotivführer 2.0");
 
-		// Erstelle MenuBar und füge sie dem Frame hinzu
+		// Erstelle MenuBar
 		JMenuBar menuBar = new JMenuBar();
 		JMenu menuEntry = new JMenu("Menü");
 
 		// Erstellen des "Fenster schließen"-Eintrags mit Icon
 		JMenuItem menuNewTrain = new JMenuItem("Neuer Zug");
+		// Belege Eintrag mit Shortcut "Strg-N"
 		menuNewTrain.setAccelerator(KeyStroke.getKeyStroke('N', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 		ImageIcon iconAdd = new ImageIcon();
 		Image imgAdd;
@@ -90,6 +71,7 @@ public class Main {
 
 		// Erstellen des "Speichern"-Eintrags mit Icon
 		JMenuItem menuSave = new JMenuItem("Speichern");
+		// Belege Eintrag mit Shortcut "Strg-S"
 		menuSave.setAccelerator(KeyStroke.getKeyStroke('S', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 		ImageIcon iconSave = new ImageIcon();
 		Image imgSave;
@@ -102,6 +84,7 @@ public class Main {
 
 		// Erstellen des "Fenster schließen"-Eintrags mit Icon
 		JMenuItem menuClose = new JMenuItem("Fenster schließen");
+		// Belege Eintrag mit Shortcut "Strg-W"
 		menuClose.setAccelerator(KeyStroke.getKeyStroke('W', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 		ImageIcon iconClose = new ImageIcon();
 		Image imgClose;
@@ -117,74 +100,66 @@ public class Main {
 		// Setze MenuBar in den Frame		
 		frame.setJMenuBar(menuBar);
 
+		// Erstelle Panel für den linken Teilbereich der Anwendung
 		JPanel leftPanel = new JPanel();
 		leftPanel.setBorder(BorderFactory.createTitledBorder("Deine Züge"));
 		leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
 		leftPanel.setPreferredSize(new Dimension(350, 500));
 		leftPanel.setMaximumSize(new Dimension(350, 500));
+		// Setze leftPanel in den Frame
 		frame.add(leftPanel, BorderLayout.WEST);
 
+		// Erstelle Panel für die Zugliste
 		JPanel trainsPanel = new JPanel();
+		trainsPanel.setLayout(new BoxLayout(trainsPanel, BoxLayout.Y_AXIS));
+		// Erstelle Panel für die linke Seite, wenn Zugliste leer ist
 		JPanel noTrainPanel = new JPanel(new GridBagLayout());
+		// Erstelle dazugehöriges Label
 		JLabel noTrainLabel = new JLabel("Noch keinen Zug erstellt");
-
 		noTrainPanel.add(noTrainLabel);
 		trainsPanel.add(noTrainPanel);
 
-		JPanel trainControlPanel = new JPanel(new GridBagLayout());
-		trainControlPanel.add(new JLabel("Kein Zug ausgewählt"));
-
-		JButton stopAllButton = new JButton("Alle Züge stoppen");
-
-		Controller controller = new Controller(frame, trainsPanel, trainControlPanel, trainCollection, stopAllButton);
-
-		// Menueintrag "Speichern" Eintrag beim Controller anmelden
-		menuSave.addActionListener(controller);
-		menuSave.setActionCommand("saveData");
-
-		// Menueintrag "Schließen" Eintrag beim Controller anmelden
-		menuClose.addActionListener(controller);
-		menuClose.setActionCommand("close");
-
-		// Menueintrag "Neuer Zug" Eintrag beim Controller anmelden
-		menuNewTrain.addActionListener(controller);
-		menuNewTrain.setActionCommand("addTrain");
-
-		trainsPanel.setLayout(new BoxLayout(trainsPanel, BoxLayout.Y_AXIS));
-
+		// Erstelle Scroll Bereich, der die Zugliste beinhaltet
 		JScrollPane scrollPanel = new JScrollPane(trainsPanel);
-
+		// Setze Scroll Bereich in den linken Teilbereich der Anwendung
 		leftPanel.add(scrollPanel);
-
-		//Erstelle addTrainButton
+		// Erstelle addTrainButton
 		JButton addTrainButton = new JButton("Neuer Zug");
+		// Button rechtsbündig ausrichten
 		addTrainButton.setAlignmentX(Component.RIGHT_ALIGNMENT);
-		addTrainButton.setActionCommand("addTrain");
-		addTrainButton.addActionListener(controller);
+		// Setze icon für addTrainButton
 		imgAdd = imgAdd.getScaledInstance(15, 15, java.awt.Image.SCALE_SMOOTH);
 		iconAdd = new ImageIcon(imgAdd);
 		addTrainButton.setIcon(iconAdd);
-
+		// Setze addTrainButton in den linken Teilbereich der Anwendung
 		leftPanel.add(addTrainButton);
-
+		
+		// Panel für rechten Bereich der Anwendung erstellen
 		JPanel rightPanel = new JPanel();
 		rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.Y_AXIS));
-
+		
+		// Erstelle Panel für Controller-Bereich der Anwendung
+		JPanel trainControlPanel = new JPanel(new GridBagLayout());
+		// Füge initial ein Platzhalterlabel hinzu
+		trainControlPanel.add(new JLabel("Kein Zug ausgewählt"));
+		// Controller-Bereich rechts Einfügen
 		rightPanel.add(trainControlPanel);
+		
+		// Erstelle Button zum Stoppen aller Züge
+		JButton stopAllButton = new JButton("Alle Züge stoppen");
 
 		frame.add(rightPanel);
-
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
 		frame.setSize(850, 550);
+		// Zentriere frame auf dem Bildschirm
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-		frame.setLocation(dim.width / 2 - frame.getSize().width / 2, dim.height / 2 - frame.getSize().height / 2);
-
+		frame.setLocation(dim.width / 2 - frame.getSize().width / 2, dim.height / 2 - frame.getSize().height / 2);frame.setVisible(true);
+		
+		// Erstelle Panel als Container des stoppAllButton
 		JPanel stopAllPanel = new JPanel(new BorderLayout());
-
+		// Deaktiviere den stopAllButton initial
 		stopAllButton.setEnabled(false);
-		stopAllButton.addActionListener(controller);
-		stopAllButton.setActionCommand("stopAllTrains");
+		// Bearbeite Design des Button
 		stopAllButton.setBackground(Color.RED);
 		stopAllButton.setForeground(Color.RED);
 		ImageIcon iconStop = new ImageIcon();
@@ -194,190 +169,33 @@ public class Main {
 		imgStop = imgStop.getScaledInstance(15, 15, java.awt.Image.SCALE_SMOOTH);
 		iconStop = new ImageIcon(imgStop);
 		stopAllButton.setIcon(iconStop);
-
+		// Setze die Größe des Panels in Abhängigkeit zu der frame-Größe
 		stopAllPanel.setPreferredSize(new Dimension(frame.getWidth(), 30));
 		stopAllPanel.setMaximumSize(new Dimension(frame.getWidth(), 30));
 		stopAllPanel.add(stopAllButton, BorderLayout.CENTER);
 		rightPanel.add(stopAllPanel);
-
-		frame.setVisible(true);
+		
+		// Initialisiere Controller
+		controller = new Controller(frame, trainsPanel, trainControlPanel, trainCollection, stopAllButton);
+		// Menueintrag "Speichern" Eintrag beim Controller anmelden
+		menuSave.addActionListener(controller);
+		menuSave.setActionCommand("saveData");
+		// Menueintrag "Schließen" Eintrag beim Controller anmelden
+		menuClose.addActionListener(controller);
+		menuClose.setActionCommand("close");
+		// Menueintrag "Neuer Zug" Eintrag beim Controller anmelden
+		menuNewTrain.addActionListener(controller);
+		menuNewTrain.setActionCommand("addTrain");
+		// addTrainButton beim Controller anmelden
+		addTrainButton.addActionListener(controller);
+		addTrainButton.setActionCommand("addTrain");
+		// stopAllButton beim Controller anmelden
+		stopAllButton.addActionListener(controller);
+		stopAllButton.setActionCommand("stopAllTrains");
+		// frame bei Controller anmelden
 		frame.addWindowListener(controller);
 
+		// Lade vorhandene Züge in die Anwendung
 		controller.initializeFromJSON();
-	}
-
-	public static void drawControllerArea(JPanel panel) {
-		JPanel trainControlPanel = new JPanel();
-		trainControlPanel.setLayout(new GridBagLayout());
-
-		// Erstelle Regeln für GridBagLayout.
-		GridBagConstraints c = new GridBagConstraints();
-		Insets set = new Insets(10, 10, 10, 10);
-		c.insets = set;
-		c.fill = GridBagConstraints.BOTH;
-		c.weightx = 1.0;
-		c.weighty = 1.0;
-
-		// Füge Zugbild hinzu
-		JLabel trainImageLabel = new JLabel();
-		ImageIcon icon = new ImageIcon();
-		Image img;
-		icon = new ImageIcon("D:/Bilder/Saved Pictures/Beautiful/Background/stock-photo-154870507.jpg");
-		img = icon.getImage();
-		img = img.getScaledInstance(150, 150, java.awt.Image.SCALE_SMOOTH);
-		icon = new ImageIcon(img);
-		trainImageLabel.setIcon(icon);
-
-		c.gridx = 0;
-		c.gridy = 0;
-		c.gridwidth = 1;
-		c.gridheight = 2;
-		c.anchor = GridBagConstraints.PAGE_START;
-		c.fill = GridBagConstraints.VERTICAL;
-		trainControlPanel.add(trainImageLabel, c);
-
-		JLabel trainName = new JLabel("Random Train Name Focker");
-		Font myFont = new Font(trainName.getFont().getFontName(), Font.BOLD, 16);
-		trainName.setFont(myFont);
-
-		c.gridx = 1;
-		c.gridy = 0;
-		c.gridwidth = 2;
-		c.gridheight = 1;
-		c.anchor = GridBagConstraints.CENTER;
-		c.fill = GridBagConstraints.HORIZONTAL;
-		trainControlPanel.add(trainName, c);
-
-		JLabel trainModelDesc = new JLabel("Dampflok Mampflol");
-		myFont = new Font(trainModelDesc.getFont().getFontName(), Font.PLAIN, 14);
-		trainModelDesc.setFont(myFont);
-		c.gridx = 1;
-		c.gridy = 1;
-		c.gridwidth = 2;
-		c.gridheight = 1;
-		c.anchor = GridBagConstraints.PAGE_START;
-		trainControlPanel.add(trainModelDesc, c);
-
-		JLabel speedLabel = new JLabel("Geschwindigkeit:");
-		c.gridx = 0;
-		c.gridy = 2;
-		c.gridwidth = 1;
-		c.anchor = GridBagConstraints.CENTER;
-		trainControlPanel.add(speedLabel, c);
-
-		JPanel speedPanel = new JPanel();
-
-		JSlider speedSlider = new JSlider();
-		speedSlider.setMajorTickSpacing(100);
-		speedSlider.setMinorTickSpacing(1);
-		speedSlider.setPaintTicks(true);
-		speedSlider.setPaintLabels(true);
-		speedSlider.setValue(0);
-		speedPanel.add(speedSlider);
-
-		JButton stopTrainButton = new JButton("Stop");
-		stopTrainButton.setBackground(Color.RED);
-		stopTrainButton.setForeground(Color.RED);
-		ImageIcon iconStop = new ImageIcon();
-		Image imgStop;
-		iconStop = new ImageIcon("images/stop.png");
-		imgStop = iconStop.getImage();
-		imgStop = imgStop.getScaledInstance(15, 15, java.awt.Image.SCALE_SMOOTH);
-		iconStop = new ImageIcon(imgStop);
-		stopTrainButton.setIcon(iconStop);
-
-		speedPanel.add(stopTrainButton);
-
-		c.gridx = 1;
-		c.gridy = 2;
-		c.gridwidth = 2;
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.anchor = GridBagConstraints.CENTER;
-		trainControlPanel.add(speedPanel, c);
-
-		JLabel directionLabel = new JLabel("Fahrtrichtung:");
-		c.gridx = 0;
-		c.gridy = 3;
-		c.gridwidth = 1;
-		trainControlPanel.add(directionLabel, c);
-
-		JPanel directionPanel = new JPanel(new FlowLayout());
-
-		ButtonGroup directionButtonGroup = new ButtonGroup();
-
-		JToggleButton toggleLeft = new JToggleButton("Links");
-		toggleLeft.setPreferredSize(new Dimension(85, 25));
-		ImageIcon iconTurnLeft = new ImageIcon();
-		Image imgTurnLeft;
-		iconTurnLeft = new ImageIcon("images/turn_left.png");
-		imgTurnLeft = iconTurnLeft.getImage();
-		imgTurnLeft = imgTurnLeft.getScaledInstance(15, 15, java.awt.Image.SCALE_SMOOTH);
-		iconTurnLeft = new ImageIcon(imgTurnLeft);
-		toggleLeft.setIcon(iconTurnLeft);
-
-		JToggleButton toggleRight = new JToggleButton("Rechts");
-		toggleRight.setPreferredSize(new Dimension(85, 25));
-		ImageIcon iconTurnRight = new ImageIcon();
-		Image imgTurnRight;
-		iconTurnRight = new ImageIcon("images/turn_right.png");
-		imgTurnRight = iconTurnRight.getImage();
-		imgTurnRight = imgTurnRight.getScaledInstance(15, 15, java.awt.Image.SCALE_SMOOTH);
-		iconTurnRight = new ImageIcon(imgTurnRight);
-		toggleRight.setIcon(iconTurnRight);
-
-		directionButtonGroup.add(toggleLeft);
-		directionButtonGroup.add(toggleRight);
-
-		directionButtonGroup.setSelected(toggleLeft.getModel(), true);
-
-		directionPanel.add(toggleLeft);
-		directionPanel.add(toggleRight);
-
-		c.gridx = 2;
-		c.gridy = 3;
-		c.gridwidth = 1;
-		trainControlPanel.add(directionPanel, c);
-
-		JLabel lightLabel = new JLabel("Licht:");
-		c.gridx = 0;
-		c.gridy = 4;
-		c.gridwidth = 1;
-		trainControlPanel.add(lightLabel, c);
-
-		JPanel lightPanel = new JPanel();
-
-		JButton switchLightButton = new JButton();
-		switchLightButton.setBorder(BorderFactory.createEmptyBorder());
-		switchLightButton.setContentAreaFilled(false);
-		ImageIcon iconSwitch = new ImageIcon();
-		Image imgSwitch;
-		iconSwitch = new ImageIcon("images/switch_left.png");
-		imgSwitch = iconSwitch.getImage();
-		imgSwitch = imgSwitch.getScaledInstance(35, 35, java.awt.Image.SCALE_SMOOTH);
-		iconSwitch = new ImageIcon(imgSwitch);
-		switchLightButton.setIcon(iconSwitch);
-
-		JLabel lightBulb = new JLabel();
-		ImageIcon iconLight = new ImageIcon();
-		Image imgLight;
-		iconLight = new ImageIcon("images/lightbulb_on.png");
-		imgLight = iconLight.getImage();
-		imgLight = imgLight.getScaledInstance(50, 50, java.awt.Image.SCALE_SMOOTH);
-		iconLight = new ImageIcon(imgLight);
-		lightBulb.setIcon(iconLight);
-
-		lightPanel.add(switchLightButton);
-		lightPanel.add(lightBulb);
-
-		JPanel flowPanel = new JPanel(new FlowLayout());
-		flowPanel.add(lightPanel);
-
-		c.gridx = 2;
-		c.gridy = 4;
-		c.gridwidth = 1;
-		c.anchor = GridBagConstraints.CENTER;
-		trainControlPanel.add(lightPanel, c);
-
-		panel.add(trainControlPanel);
 	}
 }
