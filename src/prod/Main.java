@@ -4,7 +4,7 @@ import java.awt.*;
 import javax.swing.*;
 
 /**
- * Klasse zum Starten der Anwendung
+ * Klasse zum Zeichnen der anfänglichen Benutzeroberfläche und Starten der Anwendung
  * 
  * @author Sebastian Röhling
  *
@@ -52,7 +52,7 @@ public class Main {
 		// Erstelle Hauptframe
 		JFrame frame = new JFrame("Lokomotivführer 2.0");
 
-		// Erstelle MenuBar
+		// Erstelle Menubar
 		JMenuBar menuBar = new JMenuBar();
 		JMenu menuEntry = new JMenu("Menü");
 
@@ -97,7 +97,7 @@ public class Main {
 
 		// Füge Menueintrag der Menubar hinzu
 		menuBar.add(menuEntry);
-		// Setze MenuBar in den Frame		
+		// Setze Menubar in den Frame		
 		frame.setJMenuBar(menuBar);
 
 		// Erstelle Panel für den linken Teilbereich der Anwendung
@@ -127,7 +127,7 @@ public class Main {
 		JButton addTrainButton = new JButton("Neuer Zug");
 		// Button rechtsbündig ausrichten
 		addTrainButton.setAlignmentX(Component.RIGHT_ALIGNMENT);
-		// Setze icon für addTrainButton
+		// Setze Icon für addTrainButton
 		imgAdd = imgAdd.getScaledInstance(15, 15, java.awt.Image.SCALE_SMOOTH);
 		iconAdd = new ImageIcon(imgAdd);
 		addTrainButton.setIcon(iconAdd);
@@ -151,12 +151,12 @@ public class Main {
 		frame.add(rightPanel);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setSize(850, 550);
-		// Zentriere frame auf dem Bildschirm
+		// Zentriere den Frame auf dem Bildschirm
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 		frame.setLocation(dim.width / 2 - frame.getSize().width / 2, dim.height / 2 - frame.getSize().height / 2);
 		frame.setVisible(true);
 
-		// Erstelle Panel als Container des stoppAllButton
+		// Erstelle Panel als Container des stoppAllButtons
 		JPanel stopAllPanel = new JPanel(new BorderLayout());
 		// Deaktiviere den stopAllButton initial
 		stopAllButton.setEnabled(false);
@@ -170,7 +170,7 @@ public class Main {
 		imgStop = imgStop.getScaledInstance(15, 15, java.awt.Image.SCALE_SMOOTH);
 		iconStop = new ImageIcon(imgStop);
 		stopAllButton.setIcon(iconStop);
-		// Setze die Größe des Panels in Abhängigkeit zu der frame-Größe
+		// Setze die Größe des Panels in Abhängigkeit zu der Frame-Größe
 		stopAllPanel.setPreferredSize(new Dimension(frame.getWidth(), 30));
 		stopAllPanel.setMaximumSize(new Dimension(frame.getWidth(), 30));
 		stopAllPanel.add(stopAllButton, BorderLayout.CENTER);

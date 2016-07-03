@@ -44,7 +44,7 @@ public class Controller implements ActionListener, MouseListener, ChangeListener
 	 */
 	private JPanel controllerAreaPanel;
 	/**
-	 * Button zum stoppen aller Züge
+	 * Button zum Stoppen aller Züge
 	 */
 	private JButton stopAllButton;
 	/**
@@ -73,11 +73,11 @@ public class Controller implements ActionListener, MouseListener, ChangeListener
 	 */
 	private String imagePath;
 	/**
-	 * Panel, welches das zu erstellende/ bearbeitende Zugobjekt darstellt
+	 * Panel, welches das zu erstellende/ bearbeitende Zugobjekt beinhaltet
 	 */
 	private JPanel affectedPanel;
 	/**
-	 * Zu erstellendes/ bearbeitenden Zugobjekt
+	 * Zu erstellendes/ bearbeitendes Zugobjekt
 	 */
 	private Train affectedTrain;
 	/**
@@ -89,19 +89,19 @@ public class Controller implements ActionListener, MouseListener, ChangeListener
 	 */
 	private Train selectedTrain;
 	/**
-	 * Geschwindigkeitslabel des ausgewählten Zugobjekt in der Zugliste
+	 * Geschwindigkeitslabel des ausgewählten Zugobjekts in der Zugliste
 	 */
 	private JLabel selectedSpeedLabel;
 	/**
-	 * Richtungslabel des ausgewählten Zugobjekt in der Zugliste
+	 * Richtungslabel des ausgewählten Zugobjekts in der Zugliste
 	 */
 	private JLabel selectedDirectionsLabel;
 	/**
-	 * Lichtlabel des ausgewählten Zugobjekt in der Zugliste
+	 * Lichtlabel des ausgewählten Zugobjekts in der Zugliste
 	 */
 	private JLabel selectedLightLabel;
 	/**
-	 * ButtonGroup zur Auswahl des Richtung im Controller-Bereich
+	 * ButtonGroup zur Auswahl der Richtung im Controller-Bereich
 	 */
 	private ButtonGroup directionButtonGroup;
 	/**
@@ -113,11 +113,11 @@ public class Controller implements ActionListener, MouseListener, ChangeListener
 	 */
 	private JToggleButton toggleRight;
 	/**
-	 * Schalter zu Licht ein-/ausschalten im Controller-Bereich
+	 * Schalter zum Licht ein-/ausschalten im Controller-Bereich
 	 */
 	private JButton switchLightButton;
 	/**
-	 * Label zur Visualisierung der Lichtstatus des Zuges im Controller-Bereich
+	 * Label zur Visualisierung des Lichtstatus des Zuges im Controller-Bereich
 	 */
 	private JLabel lightBulb;
 	/**
@@ -133,7 +133,7 @@ public class Controller implements ActionListener, MouseListener, ChangeListener
 	 */
 	private JLabel controllerTrainName;
 	/**
-	 * Zugbeschreibung-Label des ausgewählten Zuges im Controller-Bereich
+	 * Zugbeschreibungs-Label des ausgewählten Zuges im Controller-Bereich
 	 */
 	private JLabel controllerTrainModelDesc;
 	/**
@@ -158,7 +158,7 @@ public class Controller implements ActionListener, MouseListener, ChangeListener
 	 * @param trainCollection
 	 *            Sammlung an Zugobjekten
 	 * @param stopAllButton
-	 *            Button zum stoppen aller Züge
+	 *            Button zum Stoppen aller Züge
 	 */
 	public Controller(JFrame mainFrame, JPanel trainsPanel, JPanel controllerAreaPanel, TrainCollection trainCollection,
 			JButton stopAllButton) {
@@ -214,8 +214,7 @@ public class Controller implements ActionListener, MouseListener, ChangeListener
 		trainModelDescTextField = new JTextField();
 		trainDialog.add(trainModelDescTextField, c);
 
-		// Setze Layout Einstellungen für Panel, welches den "Durchsuchen" und
-		// "Bild löschen"-Button enthält
+		// Setze Layout Einstellungen für Panel, welches den "Durchsuchen" und "Bild löschen"-Button enthält
 		c.gridx = 1;
 		c.gridy = 4;
 		c.gridwidth = 2;
@@ -254,12 +253,12 @@ public class Controller implements ActionListener, MouseListener, ChangeListener
 		trainImageLabel = new JLabel("Kein Bild gesetzt");
 		trainDialog.add(trainImageLabel, c);
 
-		// Setze Layout Einstellungen Action-Buttons
+		// Setze Layout Einstellungen des Action-Buttons
 		c = new GridBagConstraints();
 		c.gridx = 2;
 		c.gridy = 5;
 		c.anchor = GridBagConstraints.EAST;
-		// Benutze Hilfspanel für rechtsbündige Ausrichung
+		// Benutze Hilfspanel für rechtsbündige Ausrichtung
 		JPanel panelAction = new JPanel();
 		// Setze Layout in Hilfspanel zu "FlowLayout.RIGHT"
 		panelAction.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -277,7 +276,7 @@ public class Controller implements ActionListener, MouseListener, ChangeListener
 		// Füge Buttons dem Hilfspanel hinzu
 		panelAction.add(cancelDialogButton);
 		panelAction.add(createButton);
-		// Füge Hilfspanel zum Dialog dazu
+		// Füge Hilfspanel zum Dialog hinzu
 		trainDialog.add(panelAction, c);
 
 		trainDialog.setSize(400, 250);
@@ -296,7 +295,7 @@ public class Controller implements ActionListener, MouseListener, ChangeListener
 	 *            Neu erstellter Zug
 	 */
 	public void drawTrainPanel(Train train) {
-		// Lösche das Platzhalter-Label aus dem Panel, wenn es keinen Zug gibt
+		// Lösche das Platzhalter-Label aus dem Panel, wenn es keinen Zug gibt, indem alle Komponenten aus dem Panel entfernt werden
 		if (this.trainCollection.getTrains().isEmpty()) {
 			this.trainsPanel.removeAll();
 			this.trainsPanel.repaint();
@@ -307,7 +306,7 @@ public class Controller implements ActionListener, MouseListener, ChangeListener
 
 		// Erstelle neues Panel für den Listeneintrag
 		JPanel newTrainPanel = new JPanel();
-		// Gebe panel einen eindeutigen Bezeichner
+		// Gebe Panel einen eindeutigen Bezeichner (= Zugname)
 		newTrainPanel.setName(train.getName());
 		newTrainPanel.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
 		newTrainPanel.setPreferredSize(new Dimension(315, 100));
@@ -315,7 +314,7 @@ public class Controller implements ActionListener, MouseListener, ChangeListener
 		newTrainPanel.setMinimumSize(new Dimension(315, 100));
 		newTrainPanel.setLayout(new GridBagLayout());
 
-		// Erstelle Regeln für GridBagLayout.
+		// Erstelle Regeln für GridBagLayout
 		GridBagConstraints c = new GridBagConstraints();
 		c.fill = GridBagConstraints.BOTH;
 		c.weightx = 1.0;
@@ -343,7 +342,7 @@ public class Controller implements ActionListener, MouseListener, ChangeListener
 		c.gridy = 0;
 		newTrainPanel.add(speedLabel, c);
 
-		// Füge Richtunglabel hinzu
+		// Füge Richtungslabel hinzu
 		JLabel directionLabel = new JLabel();
 		directionLabel.setName("directionLabel");
 		if (train.isDirectionRight()) {
@@ -404,9 +403,9 @@ public class Controller implements ActionListener, MouseListener, ChangeListener
 		deleteTrainButton.addMouseListener(this);
 		deleteTrainButton.setBorder(BorderFactory.createEmptyBorder());
 
-		// Füge "Edit"- und "Delete"-Button  einem Hilfpanel hinzu
+		// Füge "Edit"- und "Delete"-Button einem Hilfpanel hinzu
 		JPanel trainActionPanel = new JPanel();
-		// Mache dieses Panel durchsichtig, für den hover-over Effekt der Elternpanels
+		// Mache dieses Panel durchsichtig, für den Hover-Over Effekt der Elternpanels
 		trainActionPanel.setOpaque(false);
 		trainActionPanel.add(editTrainButton);
 		trainActionPanel.add(deleteTrainButton);
@@ -505,7 +504,7 @@ public class Controller implements ActionListener, MouseListener, ChangeListener
 		// Erstelle "Bild löschen"-Button
 		this.deleteImageButton = new JButton("Bild löschen");
 
-		//Aktiviere Button nur, wenn Zug ein Bild besitzt
+		// Aktiviere Button nur, wenn Zug ein Bild besitzt
 		if (train.getImagePath() == null) {
 			deleteImageButton.setEnabled(false);
 		} else {
@@ -537,7 +536,7 @@ public class Controller implements ActionListener, MouseListener, ChangeListener
 			imagePath = train.getImagePath();
 
 			ImageIcon icon = new ImageIcon();
-			// Erstelle Image zum skalieren des Bildes
+			// Erstelle Image zum Skalieren des Bildes
 			Image img;
 			icon = new ImageIcon(imagePath);
 			img = icon.getImage();
@@ -551,7 +550,7 @@ public class Controller implements ActionListener, MouseListener, ChangeListener
 		}
 		trainDialog.add(trainImageLabel, c);
 
-		// Setze Layout Einstellungen Action-Buttons
+		// Setze Layout Einstellungen für die Action-Buttons
 		c = new GridBagConstraints();
 		c.gridx = 2;
 		c.gridy = 5;
@@ -560,7 +559,7 @@ public class Controller implements ActionListener, MouseListener, ChangeListener
 		JPanel panelAction = new JPanel();
 		// Setze Layout in Hilfspanel zu "FlowLayout.RIGHT"
 		panelAction.setLayout(new FlowLayout(FlowLayout.RIGHT));
-		// Erstelle Buttons zum Abbrechen oder Erstellen
+		// Erstelle Buttons zum Abbrechen oder Speichern
 		JButton cancelDialogButton = new JButton("Abbrechen");
 		cancelDialogButton.setActionCommand("cancelDialog");
 		cancelDialogButton.addActionListener(this);
@@ -568,13 +567,13 @@ public class Controller implements ActionListener, MouseListener, ChangeListener
 		saveButton.setActionCommand("saveTrain");
 		saveButton.addActionListener(this);
 		// Setze "Erstelle"-Button als Default Button, damit er durch
-		// Enter-Drücken ausgelöst wird und blaum umrandet ist
+		// Enter-Drücken ausgelöst wird und blau umrandet ist
 		trainDialog.getRootPane().setDefaultButton(saveButton);
 
 		// Füge Buttons dem Hilfspanel hinzu
 		panelAction.add(cancelDialogButton);
 		panelAction.add(saveButton);
-		// Füge Hilfspanel zum Dialog dazu
+		// Füge Hilfspanel zum Dialog hinzu
 		trainDialog.add(panelAction, c);
 
 		// Vergrößere Dialog, wenn er das Zugbild anzeigt
@@ -593,7 +592,7 @@ public class Controller implements ActionListener, MouseListener, ChangeListener
 
 	/**
 	 * Mit dieser Methode werden bestehende Zuglisteneinträge nach Bearbeitung
-	 * eines Zuges aktualisierts
+	 * eines Zuges aktualisiert
 	 * 
 	 * @param train
 	 *            Bearbeiteter Zug
@@ -605,7 +604,7 @@ public class Controller implements ActionListener, MouseListener, ChangeListener
 		panel.setBackground(trainsPanel.getBackground());
 		// Entferne alle bisherigen Komponenten
 		panel.removeAll();
-		// Gebe panel einen eindeutigen Bezeichner
+		// Gebe Panel einen eindeutigen Bezeichner
 		panel.setName(train.getName());
 		panel.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
 		panel.setPreferredSize(new Dimension(315, 100));
@@ -613,7 +612,7 @@ public class Controller implements ActionListener, MouseListener, ChangeListener
 		panel.setMinimumSize(new Dimension(315, 100));
 		panel.setLayout(new GridBagLayout());
 
-		// Erstelle Regeln für GridBagLayout.
+		// Erstelle Regeln für GridBagLayout
 		GridBagConstraints c = new GridBagConstraints();
 		c.fill = GridBagConstraints.BOTH;
 		c.weightx = 1.0;
@@ -733,7 +732,7 @@ public class Controller implements ActionListener, MouseListener, ChangeListener
 
 	/**
 	 * Methode zum Zeichnen des Controller-Bereiches, nachdem ein Zug ausgewählt
-	 * wurde. Hier können Geschwindigkeit, Licht und Fahrtrichtung des Zuges
+	 * wurde. Hier können Geschwindigkeit, Licht und Fahrtrichtung dieses Zuges
 	 * verstellt werden.
 	 */
 	public void drawControllerArea() {
@@ -742,7 +741,7 @@ public class Controller implements ActionListener, MouseListener, ChangeListener
 		JPanel trainControlPanel = new JPanel();
 		trainControlPanel.setLayout(new GridBagLayout());
 
-		// Erstelle Regeln für GridBagLayout.
+		// Erstelle Regeln für GridBagLayout
 		GridBagConstraints c = new GridBagConstraints();
 		Insets set = new Insets(10, 10, 10, 10);
 		c.insets = set;
@@ -803,7 +802,7 @@ public class Controller implements ActionListener, MouseListener, ChangeListener
 		c.anchor = GridBagConstraints.CENTER;
 		trainControlPanel.add(speedLabel, c);
 
-		// Packe den Slider zur Geschwindigkeitanpassung und den Stop Knopf in ein Hilfspanel
+		// Packe den Slider zur Geschwindigkeitanpassung und den stopTrainButton in ein Hilfspanel
 		JPanel speedPanel = new JPanel();
 		// Initialisiere den Slider und füge ihn dem Hilfspanel hinzu
 		this.speedSlider = new JSlider();
@@ -815,7 +814,7 @@ public class Controller implements ActionListener, MouseListener, ChangeListener
 		this.speedSlider.setPaintLabels(true);
 		this.speedSlider.setValue(this.selectedTrain.getSpeed());
 		speedPanel.add(this.speedSlider);
-		// Füge den StopButton dem Hilfspanel hinzu
+		// Füge den stopTrainButton dem Hilfspanel hinzu
 		JButton stopTrainButton = new JButton("Stop");
 		stopTrainButton.addActionListener(this);
 		stopTrainButton.setActionCommand("stopTrain");
@@ -848,7 +847,7 @@ public class Controller implements ActionListener, MouseListener, ChangeListener
 		JPanel directionPanel = new JPanel(new FlowLayout());
 		// Erstelle ButtonGroup
 		this.directionButtonGroup = new ButtonGroup();
-		// Erstelle ToggleButtons für beide Fahrtrichtungen
+		// Erstelle ToggleButtons für Fahrtrichtungen links
 		this.toggleLeft = new JToggleButton("Links");
 		this.toggleLeft.addActionListener(this);
 		this.toggleLeft.setActionCommand("toggleLeft");
@@ -860,7 +859,8 @@ public class Controller implements ActionListener, MouseListener, ChangeListener
 		imgTurnLeft = imgTurnLeft.getScaledInstance(15, 15, java.awt.Image.SCALE_SMOOTH);
 		iconTurnLeft = new ImageIcon(imgTurnLeft);
 		this.toggleLeft.setIcon(iconTurnLeft);
-
+		
+		// Erstelle ToggleButtons für Fahrtrichtungen rechts
 		this.toggleRight = new JToggleButton("Rechts");
 		this.toggleRight.addActionListener(this);
 		this.toggleRight.setActionCommand("toggleRight");
@@ -897,7 +897,7 @@ public class Controller implements ActionListener, MouseListener, ChangeListener
 		c.gridwidth = 1;
 		trainControlPanel.add(lightLabel, c);
 
-		// Erstelle Hilfspanel für die Verstellung der Lichts
+		// Erstelle Hilfspanel für die Verstellung des Lichts
 		JPanel lightPanel = new JPanel();
 		// Initialisiere den switchLightButton
 		this.switchLightButton = new JButton();
@@ -935,7 +935,7 @@ public class Controller implements ActionListener, MouseListener, ChangeListener
 		lightPanel.add(this.switchLightButton);
 		lightPanel.add(this.lightBulb);
 
-		// Benutze erneutes Hilfspanel mit FlowLayout um gewünschte Darstellung zur erzielen
+		// Benutze erneutes Hilfspanel mit FlowLayout, um gewünschte Darstellung zu erzielen
 		JPanel flowPanel = new JPanel(new FlowLayout());
 		// Füge Hilfspanel 1 dem 2. Hilfspanel hinzu
 		flowPanel.add(lightPanel);
@@ -946,7 +946,7 @@ public class Controller implements ActionListener, MouseListener, ChangeListener
 		// Füge 2.Hilfspanel dem Control-Panel hinzu
 		trainControlPanel.add(lightPanel, c);
 
-		// Füge Control Panel dem Control-Bereich hinzu und revalidiere diesen
+		// Füge Control-Panel dem Control-Bereich hinzu und revalidiere diesen
 		this.controllerAreaPanel.add(trainControlPanel);
 		this.controllerAreaPanel.revalidate();
 	}
@@ -964,7 +964,7 @@ public class Controller implements ActionListener, MouseListener, ChangeListener
 		Boolean trainLightActive;
 
 		try {
-			// Hole JSON File
+			// Lade JSON File
 			Object obj = parser.parse(new FileReader("savedata/trains.json"));
 
 			// Lese JSON Array aus der Datei und loope darüber
@@ -972,6 +972,7 @@ public class Controller implements ActionListener, MouseListener, ChangeListener
 			Iterator<JSONObject> iterator = trainsArray.iterator();
 			while (iterator.hasNext()) {
 				JSONObject trainJSON = (JSONObject) iterator.next();
+				// Hole Objekteigentschaften
 				trainName = (String) trainJSON.get("name");
 				trainModelDesc = (String) trainJSON.get("modelDesc");
 				trainImgPath = (String) trainJSON.get("imgPath");
@@ -1093,7 +1094,7 @@ public class Controller implements ActionListener, MouseListener, ChangeListener
 			trainImageLabel.setIcon(null);
 			trainImageLabel.setText("Kein Bild gesetzt");
 
-			//	Deaktiviere deleteImageButton
+			//Deaktiviere deleteImageButton
 			deleteImageButton.setEnabled(false);
 			// Passe Dialoggröße an
 			trainDialog.setSize(400, 250);
@@ -1127,7 +1128,7 @@ public class Controller implements ActionListener, MouseListener, ChangeListener
 			// Erstelle neues Zugobjekt
 			Train newTrain = new Train(trainName, trainModelDesc, imagePath);
 
-			// Nach schließen des Dialoges ein neuer Listeneintrag für den Zug erstellt werden
+			// Erstelle neuen Listeneintrag für den erstellten Zug nach Schließen des Dialoges Zug erstellt werden
 			this.drawTrainPanel(newTrain);
 
 			// Füge Zug der trainCollection hinzu		
@@ -1166,7 +1167,7 @@ public class Controller implements ActionListener, MouseListener, ChangeListener
 			// Hole Zugobjekt
 			this.affectedTrain = this.trainCollection.getTrainByName(trainName);
 
-			// Frage nach, onb Zug wirklich gelöscht werden soll
+			// Frage nach, ob Zug wirklich gelöscht werden soll
 			int confirmResult = JOptionPane.showConfirmDialog(this.mainFrame,
 					"Soll Zug " + trainName + " wirklich gelöscht werden?", "Zug " + trainName + " löschen?",
 					JOptionPane.YES_NO_OPTION);
@@ -1244,15 +1245,15 @@ public class Controller implements ActionListener, MouseListener, ChangeListener
 				icon = new ImageIcon(img);
 				controllerImageLabel.setIcon(icon);
 
-				//Aktualisieren Namen
+				//Aktualisiere Namen
 				this.controllerTrainName.setText(this.affectedTrain.getName());
-				//Aktualisieren Beschreibung
+				//Aktualisiere Beschreibung
 				this.controllerTrainModelDesc.setText(this.affectedTrain.getModelDesc());
 			}
 
 			trainDialog.dispose();
 
-			// Nach schließen des Dialoges muss der neue Zug auch in der Liste aktualisiert werden
+			// Nach Schließen des Dialoges muss der neue Zug auch in der Liste aktualisiert werden
 			this.redrawTrainPanel(this.affectedTrain, affectedPanel);
 
 			// Merke, dass trainCollection verändert wurde
@@ -1262,7 +1263,7 @@ public class Controller implements ActionListener, MouseListener, ChangeListener
 			if (this.selectedTrain.getSpeed() != 0) {
 				// Setze Geschwindigkeit des Zuges auf 0
 				this.selectedTrain.setSpeed(0);
-				// Aktualisiere Label des dazugehörigen Listeneintrag
+				// Aktualisiere Label des dazugehörigen Listeneintrags
 				this.selectedSpeedLabel.setText("Geschwindigkeit: " + this.selectedTrain.getSpeed() + "%");
 				// Aktualisiere speedSlider im Control-Bereich
 				this.speedSlider.setValue(0);
@@ -1288,7 +1289,7 @@ public class Controller implements ActionListener, MouseListener, ChangeListener
 			ImageIcon iconLight = new ImageIcon();
 			Image imgSwitch;
 
-			// Überprüfe, welche Bilder dem Lichtschalter und der Glühbirne zugewiesen werden muss
+			// Überprüfe, welche Bilder dem Lichtschalter und der Glühbirne zugewiesen werden müssen
 			if (this.selectedTrain.isLightActive()) {
 				iconSwitch = new ImageIcon("images/switch_right.png");
 				iconLight = new ImageIcon("images/lightbulb_on.png");
@@ -1318,7 +1319,7 @@ public class Controller implements ActionListener, MouseListener, ChangeListener
 			// Setze die Geschwindigkeit aller Züge auf 0
 			this.trainCollection.stopAllTrains();
 			if (this.selectedTrainPanel != null) {
-				// Ist ein Zug gerade im Control-Bereich vertreten, so aktualisiere auch den Wert dieses sliders
+				// Ist ein Zug gerade im Control-Bereich vertreten, so aktualisiere auch den Wert dieses Sliders
 				this.speedSlider.setValue(this.selectedTrain.getSpeed());
 			}
 
@@ -1369,9 +1370,9 @@ public class Controller implements ActionListener, MouseListener, ChangeListener
 			if (!(activePanel == selectedTrainPanel)) {
 				activePanel.setBackground(new Color(230, 230, 230));
 			}
-			// Überprüfe, ob Auslöser ein Button ist
+		// Überprüfe, ob Auslöser ein Button ist
 		} else if (e.getSource() instanceof JButton) {
-			// Hole auslösender Button
+			// Hole auslösenden Button
 			JButton activeButton = (JButton) (e.getSource());
 			// Hole dazugehöriges Eltern-Panel
 			JPanel activePanel = (JPanel) activeButton.getParent().getParent();
@@ -1394,7 +1395,7 @@ public class Controller implements ActionListener, MouseListener, ChangeListener
 		// Überprüfe, ob Event von einem Panel ausgelöst wurde
 		if (e.getSource() instanceof JPanel) {
 			JPanel activePanel = (JPanel) (e.getSource());
-			// Setze Hintergrund nur zurück, wenn das Panel nicht gerade angeklickt wurde
+			// Setze Hintergrund nur zurück, wenn das Panel nicht gerade ausgewählt ist
 			if (!(activePanel == selectedTrainPanel)) {
 				activePanel.setBackground(trainsPanel.getBackground());
 			}
@@ -1427,7 +1428,7 @@ public class Controller implements ActionListener, MouseListener, ChangeListener
 				// Hole den ausgewählten Zug über den Panel-Namen
 				this.selectedTrain = this.trainCollection.getTrainByName(activePanel.getName());
 
-				// Hole sich alle relevanten Labels aus dem ausgewählten Panel, um
+				// Hole alle relevanten Labels aus dem ausgewählten Panel, um
 				// ihre Werte später manipulieren zu können
 				for (Component component : activePanel.getComponents()) {
 					if (("speedLabel").equals(component.getName())) {
@@ -1441,7 +1442,7 @@ public class Controller implements ActionListener, MouseListener, ChangeListener
 					}
 				}
 
-				// Zeichne Controler Area
+				// Zeichne Controller Area
 				this.drawControllerArea();
 
 				// Überprüfe, ob angeklicktes Panel davor nicht schon ausgewählt bzw. angeklickt wurde
@@ -1453,10 +1454,10 @@ public class Controller implements ActionListener, MouseListener, ChangeListener
 				// Verdunkle den Hintergrund des angeklickten Panels
 				activePanel.setBackground(new Color(210, 210, 210));
 
-				// Hole den ausgewählten Zug über den Panel Namen
+				// Hole den ausgewählten Zug über den Panel-Namen
 				this.selectedTrain = this.trainCollection.getTrainByName(activePanel.getName());
 
-				// Hole sich alle relevanten Labels aus dem ausgewählten Panel, um
+				// Hole alle relevanten Labels aus dem ausgewählten Panel, um
 				// ihre Werte später manipulieren zu können
 				for (Component component : activePanel.getComponents()) {
 					if (("speedLabel").equals(component.getName())) {
@@ -1469,7 +1470,7 @@ public class Controller implements ActionListener, MouseListener, ChangeListener
 						this.selectedLightLabel = (JLabel) component;
 					}
 				}
-				// Zeichne Controler Area
+				// Zeichne Controller Area
 				this.drawControllerArea();
 			}
 		}

@@ -41,17 +41,18 @@ public class TrainCollection {
 	}
 
 	/**
-	 * Fügt einen Zug der Zugliste hinzu, wenn der Zugname noch nicht belegt ist
+	 * Fügt einen Zug der Zugliste hinzu, wenn der Zugname noch nicht belegt ist und loggt die vorgenommene Änderung
 	 * 
 	 * @param train
 	 *            Zugobjekt
 	 */
 	public void addTrain(Train train) {
-		// Bevor Zug hinzugefügt wird, muss überprüft werden, ob der Zug bereits mit dem Namen existiert
+		// Bevor Zug hinzugefügt wird, muss überprüft werden, ob ein Zug mit dem Namen bereits existiert
 		if (this.trainIsAlreadyExisting(train.getName())) {
 			return;
 		} else {
 			this.trains.add(train);
+			System.out.println("Zug '" + train.getName() + "' hinzugefügt");
 		}
 	}
 
