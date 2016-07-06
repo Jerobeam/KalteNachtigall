@@ -28,7 +28,7 @@ import sun.awt.image.ImageWatched.Link;
  * Bedarf neu.
  * 
  * Auch übernimmt sie das Befüllen der von der Main-Klasse zur Verfügung
- * gestellten Containern: Auf der linken Seite wird eine Liste mit allen
+ * gestellten Container: Auf der linken Seite wird eine Liste mit allen
  * erstellen Zugobjekten aktuell gehalten. Dort können alle Züge verwaltet werden.
  * Wählt man einen Zug aus, so wird die rechte Seite der Anwendung mit einem
  * Controll-Bereich für den ausgewählten Zug geladen. Dort kann der Zug
