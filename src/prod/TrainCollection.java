@@ -3,7 +3,8 @@ package prod;
 import java.util.ArrayList;
 
 /**
- * Klasse für eine Ansammlung an Zügen
+ * Mit dieser Klasse kann eine Ansammlung an Train-Objekten erstellt werden. Sie
+ * stellt Methoden zu ihrer Verwaltung zur Verfügungs.
  * 
  * @author Sebastian Röhling
  *
@@ -41,7 +42,8 @@ public class TrainCollection {
 	}
 
 	/**
-	 * Fügt einen Zug der Zugliste hinzu, wenn der Zugname noch nicht belegt ist und loggt die vorgenommene Änderung
+	 * Fügt einen Zug der Zugliste hinzu, wenn der Zugname noch nicht belegt ist
+	 * und loggt die vorgenommene Änderung
 	 * 
 	 * @param train
 	 *            Zugobjekt

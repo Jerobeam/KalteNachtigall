@@ -1,7 +1,8 @@
 package prod;
 
 /**
- * Klasse für die einzelnen Zugobjekte
+ * Train ist die Klasse für ein einzelnes Zugobjekt. Sie hält Zugeigenschaften
+ * und bietet Methoden zu deren Manipulation an.
  * 
  * @author Sebastian Röhling
  *

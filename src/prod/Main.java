@@ -4,7 +4,10 @@ import java.awt.*;
 import javax.swing.*;
 
 /**
- * Klasse zum Zeichnen der anfänglichen Benutzeroberfläche und Starten der Anwendung
+ * Diese Klasse ist für das Zeichnen der anfänglichen Benutzeroberfläche und
+ * Starten der Anwendung verantwortlich. Das UI wird von ihr in zwei Bereiche
+ * eingeteilt und erstellt für deren Inhalte Container, welche später vom
+ * Controller gefüllt werden.
  * 
  * @author Sebastian Röhling
  *
@@ -25,7 +28,7 @@ public class Main {
 	/**
 	 * Main Methode zum Start der Anwendung
 	 * 
-	 * @param args
+	 * @param args Code zum Start der Anwendung
 	 */
 	public static void main(String[] args) {
 
@@ -60,6 +63,7 @@ public class Main {
 		JMenuItem menuNewTrain = new JMenuItem("Neuer Zug");
 		// Belege Eintrag mit Shortcut "Strg-N"
 		menuNewTrain.setAccelerator(KeyStroke.getKeyStroke('N', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+
 		ImageIcon iconAdd = new ImageIcon();
 		Image imgAdd;
 		iconAdd = new ImageIcon("images/add.png");

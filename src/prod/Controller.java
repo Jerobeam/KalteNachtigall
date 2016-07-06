@@ -23,7 +23,16 @@ import org.json.simple.parser.ParseException;
 import sun.awt.image.ImageWatched.Link;
 
 /**
- * Controllerklasse mit Logik
+ * Die Controller-Klasse ist für jegliche Logik der Anwendung verantwortlich, fängt
+ * alle Benutzerinteraktionen ab und zeichnet Teile der Benutzeroberflächen bei
+ * Bedarf neu.
+ * 
+ * Auch übernimmt sie das Befüllen der von der Main-Klasse zur Verfügung
+ * gestellten Containern: Auf der linken Seite wird eine Liste mit allen
+ * erstellen Zugobjekten aktuell gehalten. Dort können alle Züge verwaltet werden.
+ * Wählt man einen Zug aus, so wird die rechte Seite der Anwendung mit einem
+ * Controll-Bereich für den ausgewählten Zug geladen. Dort kann der Zug
+ * gesteuert werden.
  * 
  * @author Sebastian Röhling
  *
@@ -859,7 +868,7 @@ public class Controller implements ActionListener, MouseListener, ChangeListener
 		imgTurnLeft = imgTurnLeft.getScaledInstance(15, 15, java.awt.Image.SCALE_SMOOTH);
 		iconTurnLeft = new ImageIcon(imgTurnLeft);
 		this.toggleLeft.setIcon(iconTurnLeft);
-		
+
 		// Erstelle ToggleButtons für Fahrtrichtungen rechts
 		this.toggleRight = new JToggleButton("Rechts");
 		this.toggleRight.addActionListener(this);
@@ -1370,7 +1379,7 @@ public class Controller implements ActionListener, MouseListener, ChangeListener
 			if (!(activePanel == selectedTrainPanel)) {
 				activePanel.setBackground(new Color(230, 230, 230));
 			}
-		// Überprüfe, ob Auslöser ein Button ist
+			// Überprüfe, ob Auslöser ein Button ist
 		} else if (e.getSource() instanceof JButton) {
 			// Hole auslösenden Button
 			JButton activeButton = (JButton) (e.getSource());
