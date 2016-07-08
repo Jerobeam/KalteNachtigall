@@ -539,8 +539,9 @@ public class Controller implements ActionListener, MouseListener, ChangeListener
 		c.weighty = 1.0;
 
 		// Besitzt der zu editierende Zug ein Bild, so zeige dieses an
+		trainImageLabel = new JLabel();
 		if (train.getImagePath() == null) {
-			trainImageLabel = new JLabel("Kein Bild gesetzt");
+			trainImageLabel.setText("Kein Bild gesetzt");
 		} else {
 			imagePath = train.getImagePath();
 
